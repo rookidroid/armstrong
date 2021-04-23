@@ -109,9 +109,9 @@ class MyApp(QtWidgets.QMainWindow):
         self.ui.groupBox_position.setEnabled(False)
 
         # TCP Client
-        tcp_client_ip = self.config.get('IP', '192.168.0.191')
-        ctrl_port = self.config.get('CTRL_PORT', '1234')
-        cmd_port = self.config.get('CMD_PORT', '1235')
+        tcp_client_ip = self.config.get('IP', '192.168.0.20')
+        ctrl_port = self.config.get('CTRL_PORT', '10002')
+        cmd_port = self.config.get('CMD_PORT', '10003')
         self.ui.lineEdit_ip.setText(tcp_client_ip)
         self.ui.lineEdit_ctrl_port.setText(ctrl_port)
         self.ui.lineEdit_cmd_port.setText(cmd_port)
