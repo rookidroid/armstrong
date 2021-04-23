@@ -129,7 +129,6 @@ class MyApp(QtWidgets.QMainWindow):
         msg = tsk_cmd+','+azi+','+ele+','+rol+','+x_offset + \
             ','+y_offset+','+z_offset+','+tool_offset+'\r\n'
 
-        # print(msg)
         self.cmd_socket.sendrecv(msg)
         self.ui.pushButton_set.setEnabled(True)
 
