@@ -109,12 +109,26 @@ class MyApp(QtWidgets.QMainWindow):
         self.ui.groupBox_position.setEnabled(False)
 
         # TCP Client
-        tcp_client_ip = self.config.get('IP', '192.168.0.20')
-        ctrl_port = self.config.get('CTRL_PORT', '10002')
-        cmd_port = self.config.get('CMD_PORT', '10003')
-        self.ui.lineEdit_ip.setText(tcp_client_ip)
-        self.ui.lineEdit_ctrl_port.setText(ctrl_port)
-        self.ui.lineEdit_cmd_port.setText(cmd_port)
+        self.config['IP'] = self.config.get('IP', '192.168.0.20')
+        self.config['CTRL_PORT'] = self.config.get('CTRL_PORT', '10002')
+        self.config['CMD_PORT'] = self.config.get('CMD_PORT', '10003')
+        self.config['SPEED'] = self.config.get('SPEED', 30)
+        self.ui.lineEdit_ip.setText(self.config['IP'])
+        self.ui.lineEdit_ctrl_port.setText(self.config['CTRL_PORT'])
+        self.ui.lineEdit_cmd_port.setText(self.config['CMD_PORT'])
+
+        self.ui.spinBox_speed.setValue(self.config['SPEED'])
+
+        self.config['TOOL'] = self.config.get('TOOL', 60)
+        self.ui.doubleSpinBox_tool.setValue(self.config['TOOL'])
+
+        self.save_config()
+
+    def save_config(self):
+        try:
+            json.dump(self.config, open('config.json', 'w+'))
+        except PermissionError as err:
+            pass
 
     def on_load_button_clicked(self):
         tsk_cmd = str(2.0)
@@ -124,15 +138,19 @@ class MyApp(QtWidgets.QMainWindow):
         x_offset = '0.0'
         y_offset = '0.0'
         z_offset = '0.0'
-        tool_offset = '60.0'
+        tool_offset = '0.0'
 
         msg = tsk_cmd+','+azi+','+ele+','+rol+','+x_offset + \
             ','+y_offset+','+z_offset+','+tool_offset+'\r\n'
 
+        self.display_message(msg)
         self.cmd_socket.sendrecv(msg)
         self.ui.pushButton_set.setEnabled(True)
 
     def on_home_button_clicked(self):
+        self.config['TOOL'] = self.ui.doubleSpinBox_tool.value()
+        self.save_config()
+
         tsk_cmd = str(1.0)
         azi = '0.0'
         ele = '0.0'
@@ -140,12 +158,12 @@ class MyApp(QtWidgets.QMainWindow):
         x_offset = '0.0'
         y_offset = '0.0'
         z_offset = '0.0'
-        tool_offset = '60.0'
+        tool_offset = str(self.config['TOOL'])
 
         msg = tsk_cmd+','+azi+','+ele+','+rol+','+x_offset + \
             ','+y_offset+','+z_offset+','+tool_offset+'\r\n'
 
-        # print(msg)
+        self.display_message(msg)
         self.cmd_socket.sendrecv(msg)
         self.ui.pushButton_set.setEnabled(True)
 
@@ -164,8 +182,11 @@ class MyApp(QtWidgets.QMainWindow):
         msg = tsk_cmd+','+azi+','+ele+','+rol+','+x_offset + \
             ','+y_offset+','+z_offset+','+tool_offset+'\r\n'
 
-        # print(msg)
+        self.display_message(msg)
         self.cmd_socket.sendrecv(msg)
+
+        self.config['TOOL'] = tool_offset
+        self.save_config()
 
     def x_slider(self, val):
         self.ui.doubleSpinBox_x.setValue(val)
@@ -219,27 +240,44 @@ class MyApp(QtWidgets.QMainWindow):
     def on_init_button_clicked(self):
         if self.ui.pushButton_init.text() == 'Initialize':
             self.ui.pushButton_init.setText('Stop')
+
+            speed = self.ui.spinBox_speed.value()
+
             success = 0
+            self.display_message('1;1;RSTALRM')
             success += self.ctrl_socket.sendrecv('1;1;RSTALRM')
+            self.display_message('1;1;STOP')
             success += self.ctrl_socket.sendrecv('1;1;STOP')
+            self.display_message('1;1;CNTLON')
             success += self.ctrl_socket.sendrecv('1;1;CNTLON')
+            self.display_message('1;1;STATE')
             success += self.ctrl_socket.sendrecv('1;1;STATE')
+            self.display_message('1;1;SRVON')
             success += self.ctrl_socket.sendrecv('1;1;SRVON')
+            self.display_message('1;1;SLOTINIT')
             success += self.ctrl_socket.sendrecv('1;1;SLOTINIT')
+            self.display_message('1;1;RUNSIM2SOCKET;0')
             success += self.ctrl_socket.sendrecv('1;1;RUNSIM2SOCKET;0')
-            success += self.ctrl_socket.sendrecv('1;1;OVRD=30')
+            self.display_message('1;1;OVRD='+str(speed))
+            success += self.ctrl_socket.sendrecv('1;1;OVRD='+str(speed))
 
             success = 0
             if success == 0:
+                self.config['SPEED'] = speed
+                self.save_config()
+
                 self.ui.groupBox_predefine.setEnabled(True)
                 self.ui.groupBox_position.setEnabled(True)
                 self.ui.pushButton_set.setEnabled(True)
 
         elif self.ui.pushButton_init.text() == 'Stop':
             self.ui.pushButton_init.setText('Initialize')
-            print(self.ctrl_socket.sendrecv('1;1;STOP'))
-            print(self.ctrl_socket.sendrecv('1;1;SRVOFF'))
-            print(self.ctrl_socket.sendrecv('1;1;CNTLOFF'))
+            self.display_message('1;1;STOP')
+            self.ctrl_socket.sendrecv('1;1;STOP')
+            self.display_message('1;1;SRVOFF')
+            self.ctrl_socket.sendrecv('1;1;SRVOFF')
+            self.display_message('1;1;CNTLOFF')
+            self.ctrl_socket.sendrecv('1;1;CNTLOFF')
 
             self.ui.groupBox_predefine.setEnabled(False)
             self.ui.groupBox_position.setEnabled(False)
@@ -293,6 +331,11 @@ class MyApp(QtWidgets.QMainWindow):
             if not self.ui.lineEdit_cmd_port.isEnabled():
                 self.ui.groupBox_ctrl.setEnabled(True)
 
+            self.config['IP'] = self.ui.lineEdit_ip.text()
+            self.config['CTRL_PORT'] = self.ui.lineEdit_ctrl_port.text()
+            self.config['CMD_PORT'] = self.ui.lineEdit_cmd_port.text()
+            self.save_config()
+
         self.ui.pushButton_ctrl.setEnabled(True)
 
     def on_cmd_connect_button_clicked(self):
@@ -344,15 +387,28 @@ class MyApp(QtWidgets.QMainWindow):
             if not self.ui.lineEdit_ctrl_port.isEnabled():
                 self.ui.groupBox_ctrl.setEnabled(True)
 
+            self.config['IP'] = self.ui.lineEdit_ip.text()
+            self.config['CTRL_PORT'] = self.ui.lineEdit_ctrl_port.text()
+            self.config['CMD_PORT'] = self.ui.lineEdit_cmd_port.text()
+            self.save_config()
+
         self.ui.pushButton_cmd.setEnabled(True)
 
-    def on_tcp_client_message_ready(self, source, msg):
+    def on_tcp_client_message_ready(self, msg):
         self.ui.textBrowser.append(
-            '<p style="text-align: center;"><span style="color: #2196F3;"><strong>----- ' +
-            source +
-            ' -----</strong></span></p>')
+            '<p style="text-align: center;"><span style="color: #2196F3;"><strong>' +
+            'Received: ' +
+            '</strong></span>' +
+            '<span style="color: #2196F3;">' +
+            msg +
+            '</span></p>')
+
+    def display_message(self, msg):
         self.ui.textBrowser.append(
-            '<p style="text-align: center;"><span style="color: #2196F3;">' +
+            '<p style="text-align: left;"><span style="color: #000000;"><strong>' +
+            'Sent: ' +
+            '</strong></span>' +
+            '<span style="color: #000000;">' +
             msg +
             '</span></p>')
 

@@ -4,13 +4,12 @@ import socket
 
 class TCPClient(QObject):
     status = Signal(int, object)
-    message = Signal(object, object)
+    message = Signal(object)
     ERROR = -1
     LISTEN = 1
     CONNECTED = 2
     TIMEOUT = 3
     STOP = 3
- 
 
     SIG_NORMAL = 0
     SIG_STOP = 1
@@ -46,7 +45,6 @@ class TCPClient(QObject):
                     else:
                         if data:
                             self.message.emit(
-                                self.ip+':'+str(self.port),
                                 data.decode())
                         else:
                             break
@@ -70,7 +68,6 @@ class TCPClient(QObject):
         else:
             if data:
                 self.message.emit(
-                    self.ip+':'+str(self.port),
                     data.decode())
                 return 0
             else:
