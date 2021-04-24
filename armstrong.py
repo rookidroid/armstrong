@@ -16,7 +16,6 @@ class MyApp(QtWidgets.QMainWindow):
         super(MyApp, self).__init__()
 
         config_file = Path('config.json')
-        # config_file = open('config.json', 'w+')
         if config_file.exists():
             self.config = json.load(open('config.json', 'r'))
         else:
@@ -28,7 +27,6 @@ class MyApp(QtWidgets.QMainWindow):
         ui_file = QFile(ui_file_name)
         loader = QUiLoader()
         self.ui = loader.load(ui_file)
-        # self.ui = uic.loadUi('mainwindow.ui', self)
         ui_file.close()
         self.init_ui()
 
@@ -396,7 +394,8 @@ class MyApp(QtWidgets.QMainWindow):
 
     def on_tcp_client_message_ready(self, msg):
         self.ui.textBrowser.append(
-            '<p style="text-align: center;"><span style="color: #2196F3;"><strong>' +
+            '<p style="text-align: center;">' +
+            '<span style="color: #2196F3;"><strong>' +
             'Received: ' +
             '</strong></span>' +
             '<span style="color: #2196F3;">' +
@@ -405,7 +404,8 @@ class MyApp(QtWidgets.QMainWindow):
 
     def display_message(self, msg):
         self.ui.textBrowser.append(
-            '<p style="text-align: left;"><span style="color: #000000;"><strong>' +
+            '<p style="text-align: left;">' +
+            '<span style="color: #000000;"><strong>' +
             'Sent: ' +
             '</strong></span>' +
             '<span style="color: #000000;">' +
