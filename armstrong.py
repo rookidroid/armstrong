@@ -183,7 +183,7 @@ class MyApp(QtWidgets.QMainWindow):
         self.display_message(msg)
         self.cmd_socket.sendrecv(msg)
 
-        self.config['TOOL'] = tool_offset
+        self.config['TOOL'] = self.ui.doubleSpinBox_tool.value()
         self.save_config()
 
     def x_slider(self, val):
