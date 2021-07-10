@@ -27,7 +27,7 @@ exe = EXE(pyz,
           strip=False,
           upx=True,
           console=False,
-          icon='res/armstrong.ico' )
+          icon='res/armstrong.png' )
 coll = COLLECT(exe,
                a.binaries,
                a.zipfiles,
