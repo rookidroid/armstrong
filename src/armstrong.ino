@@ -52,30 +52,30 @@ float scaleB;
 float scaleC;
 float scaleD;
 
-void setup() {
+void setup()
+{
   // Create a variable to store the servo position:
   servoAAngle = servoAInitAngle;
   servoBAngle = servoBInitAngle;
   servoCAngle = servoCInitAngle;
   servoDAngle = servoDInitAngle;
-  
+
   potentiometerA = 0;
   potentiometerB = 0;
   potentiometerC = 0;
   potentiometerD = 0;
-  
+
   servoARange = servoAMaxAngle - servoAMinAngle;
   servoBRange = servoBMaxAngle - servoBMinAngle;
   servoCRange = servoCMaxAngle - servoCMinAngle;
   servoDRange = servoDMaxAngle - servoDMinAngle;
-  
-  scaleA = servoARange/1024.0;
-  scaleB = servoBRange/1024.0;
-  scaleC = servoCRange/1024.0;
-  scaleD = servoDRange/1024.0;
 
-  
-  Serial.begin(9600);           //  setup serial
+  scaleA = servoARange / 1024.0;
+  scaleB = servoBRange / 1024.0;
+  scaleC = servoCRange / 1024.0;
+  scaleD = servoDRange / 1024.0;
+
+  Serial.begin(9600); //  setup serial
   // Attach the Servo variable to a pin:
   servoA.attach(servoAPin);
   servoA.write(servoAAngle);
@@ -90,39 +90,39 @@ void setup() {
   servoD.write(servoDAngle);
 }
 
-void loop() {
-   potentiometerA = analogRead(potentiometerAPin);  // read the input pin
-//   Serial.println("A: "); 
-//   Serial.println(potentiometerA);          // debug value
-   potentiometerB = analogRead(potentiometerBPin);  // read the input pin
-//   Serial.println("B: "); 
-//   Serial.println(potentiometerB);          // debug value
-   potentiometerC = analogRead(potentiometerCPin);  // read the input pin
-//   Serial.println("C: "); 
-//   Serial.println(potentiometerC);          // debug value
-   potentiometerD = analogRead(potentiometerDPin);  // read the input pin
-//   Serial.println("D: "); 
-//   Serial.println(potentiometerD);          // debug value
-//
-//   Serial.println(scaleA);
+void loop()
+{
+  potentiometerA = analogRead(potentiometerAPin); // read the input pin
+                                                  //   Serial.println("A: ");
+                                                  //   Serial.println(potentiometerA);          // debug value
+  potentiometerB = analogRead(potentiometerBPin); // read the input pin
+                                                  //   Serial.println("B: ");
+                                                  //   Serial.println(potentiometerB);          // debug value
+  potentiometerC = analogRead(potentiometerCPin); // read the input pin
+                                                  //   Serial.println("C: ");
+                                                  //   Serial.println(potentiometerC);          // debug value
+  potentiometerD = analogRead(potentiometerDPin); // read the input pin
+                                                  //   Serial.println("D: ");
+                                                  //   Serial.println(potentiometerD);          // debug value
+                                                  //
+                                                  //   Serial.println(scaleA);
 
-   servoAAngle = potentiometerA*scaleA+servoAMinAngle;
-   servoA.write(servoAAngle);
-//   Serial.println("A angle: "); 
-//   Serial.println(servoAAngle);
-   servoBAngle = potentiometerB*scaleB+servoBMinAngle;
-   servoB.write(servoBAngle);
-//   Serial.println("B angle: "); 
-//   Serial.println(servoBAngle);
-   servoCAngle = potentiometerC*scaleC+servoCMinAngle;
-   servoC.write(servoCAngle);
-//   Serial.println("C angle: "); 
-//   Serial.println(servoCAngle);
-   servoDAngle = potentiometerD*scaleD+servoDMinAngle;
-   servoD.write(servoDAngle);
-//   Serial.println("D angle: "); 
-//   Serial.println(servoDAngle);
+  servoAAngle = potentiometerA * scaleA + servoAMinAngle;
+  servoA.write(servoAAngle);
+  //   Serial.println("A angle: ");
+  //   Serial.println(servoAAngle);
+  servoBAngle = potentiometerB * scaleB + servoBMinAngle;
+  servoB.write(servoBAngle);
+  //   Serial.println("B angle: ");
+  //   Serial.println(servoBAngle);
+  servoCAngle = potentiometerC * scaleC + servoCMinAngle;
+  servoC.write(servoCAngle);
+  //   Serial.println("C angle: ");
+  //   Serial.println(servoCAngle);
+  servoDAngle = potentiometerD * scaleD + servoDMinAngle;
+  servoD.write(servoDAngle);
+  //   Serial.println("D angle: ");
+  //   Serial.println(servoDAngle);
 
-//   delay(1000);
-
+  //   delay(1000);
 }
