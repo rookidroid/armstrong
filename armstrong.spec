@@ -26,8 +26,7 @@ exe = EXE(pyz,
           bootloader_ignore_signals=False,
           strip=False,
           upx=True,
-          console=False,
-          icon='res/armstrong.ico' )
+          console=False )
 coll = COLLECT(exe,
                a.binaries,
                a.zipfiles,
