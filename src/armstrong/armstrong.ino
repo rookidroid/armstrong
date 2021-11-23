@@ -20,16 +20,16 @@ Servo servoD;
 #define servoAMinAngle 0
 #define servoAMaxAngle 180
 #define servoBMinAngle 80
-#define servoBMaxAngle 140
-#define servoCMinAngle 15
-#define servoCMaxAngle 85
-#define servoDMinAngle 36
-#define servoDMaxAngle 180
+#define servoBMaxAngle 150
+#define servoCMinAngle 36
+#define servoCMaxAngle 180
+#define servoDMinAngle 40
+#define servoDMaxAngle 90
 
-#define potentiometerAPin A0
-#define potentiometerBPin A1
-#define potentiometerCPin A2
-#define potentiometerDPin A3
+#define potentiometerAPin A3
+#define potentiometerBPin A2
+#define potentiometerCPin A0
+#define potentiometerDPin A1
 
 // Create a variable to store the servo position:
 int servoAAngle;
