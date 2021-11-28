@@ -1,3 +1,37 @@
+/*
+ *
+ *    Source code for ArmStrong
+ *
+ *    ----------
+ *    3D printed robot arm
+ *    Copyright (C) 2021 - PRESENT  Zhengyu Peng
+ *    E-mail: zpeng.me@gmail.com
+ *    Website: https://zpeng.me
+ *
+ *    `                      `
+ *    -:.                  -#:
+ *    -//:.              -###:
+ *    -////:.          -#####:
+ *    -/:.://:.      -###++##:
+ *    ..   `://:-  -###+. :##:
+ *           `:/+####+.   :##:
+ *    .::::::::/+###.     :##:
+ *    .////-----+##:    `:###:
+ *     `-//:.   :##:  `:###/.
+ *       `-//:. :##:`:###/.
+ *         `-//:+######/.
+ *           `-/+####/.
+ *             `+##+.
+ *              :##:
+ *              :##:
+ *              :##:
+ *              :##:
+ *              :##:
+ *               .+:
+ *
+ */
+
+
 #include <Servo.h>
 
 // Create a new servo object:
@@ -5,7 +39,6 @@ Servo servoA;
 Servo servoB;
 Servo servoC;
 Servo servoD;
-//Servo servoE;
 
 // Define the servo pin:
 #define servoAPin 9
@@ -103,56 +136,32 @@ void setup()
   servoD.attach(servoDPin);
   servoD.write(servoDAngle);
 
-  pinMode(servoEPin, OUTPUT);  // sets the pin as output
-
-//  servoE.attach(servoEPin);
-//  servoE.write(servoEAngle);
+  pinMode(servoEPin, OUTPUT); // sets the pin as output
 }
 
 void loop()
 {
   potentiometerA = analogRead(potentiometerAPin); // read the input pin
-                                                  //   Serial.println("A: ");
-                                                  //   Serial.println(potentiometerA);          // debug value
+
   potentiometerB = analogRead(potentiometerBPin); // read the input pin
-                                                  //   Serial.println("B: ");
-                                                  //   Serial.println(potentiometerB);          // debug value
+
   potentiometerC = analogRead(potentiometerCPin); // read the input pin
-                                                  //   Serial.println("C: ");
-                                                  //   Serial.println(potentiometerC);          // debug value
+
   potentiometerD = analogRead(potentiometerDPin); // read the input pin
-                                                  //   Serial.println("D: ");
-                                                  //   Serial.println(potentiometerD);          // debug value
-                                                  //
-                                                  //   Serial.println(scaleA);
+
   potentiometerE = analogRead(potentiometerEPin); // read the input pin
-                                                  //   Serial.println("E: ");
-                                                  //   Serial.println(potentiometerE);          // debug value
-                                                  //
-                                                  //   Serial.println(scaleA);
 
   servoAAngle = potentiometerA * scaleA + servoAMinAngle;
   servoA.write(servoAAngle);
-  //   Serial.println("A angle: ");
-  //   Serial.println(servoAAngle);
+
   servoBAngle = potentiometerB * scaleB + servoBMinAngle;
   servoB.write(servoBAngle);
-  //   Serial.println("B angle: ");
-  //   Serial.println(servoBAngle);
+
   servoCAngle = potentiometerC * scaleC + servoCMinAngle;
   servoC.write(servoCAngle);
-  //   Serial.println("C angle: ");
-  //   Serial.println(servoCAngle);
+
   servoDAngle = potentiometerD * scaleD + servoDMinAngle;
   servoD.write(servoDAngle);
-  //   Serial.println("D angle: ");
-  //   Serial.println(servoDAngle);
 
   analogWrite(servoEPin, potentiometerE / 4);
-  //  servoEAngle = potentiometerE * scaleE + servoEMinAngle;
-  //  servoE.write(servoEAngle);
-  //   Serial.println("D angle: ");
-  //   Serial.println(servoDAngle);
-
-  //   delay(1000);
 }
