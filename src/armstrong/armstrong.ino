@@ -1,7 +1,6 @@
 /*
  *
- *    Source code for ArmStrong
- *    - Arduino Nano
+ *    ArmStrong source code on Arduino Nano
  *
  *    ----------
  *    3D printed robot arm
@@ -91,7 +90,7 @@ float scaleD;
 
 void setup()
 {
-  // Serial.begin(9600); //  setup serial
+  Serial.begin(9600); //  setup serial
 
   servoARange = servoAMaxAngle - servoAMinAngle;
   servoBRange = servoBMaxAngle - servoBMinAngle;
