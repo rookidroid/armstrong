@@ -32,7 +32,6 @@
  *
  */
 
-
 #include <Servo.h>
 
 // Create servo objects:
@@ -48,9 +47,9 @@ Servo servoD; // control arm 'up <-> down'
 #define servoDPin 12
 
 // Define the LED pin:
-#define ledPin 5 // LED pin
+#define ledPin 5
 
-
+// Define servo rotation range:
 #define servoAMinAngle 0
 #define servoAMaxAngle 180
 #define servoBMinAngle 80
@@ -60,18 +59,20 @@ Servo servoD; // control arm 'up <-> down'
 #define servoDMinAngle 40
 #define servoDMaxAngle 90
 
+// Define potentiometer pins:
 #define potentiometerAPin A3
 #define potentiometerBPin A2
 #define potentiometerCPin A0
 #define potentiometerDPin A1
 #define potentiometerEPin A4
 
-// Create a variable to store the servo position:
+// Variables to store the servo positions:
 int servoAAngle;
 int servoBAngle;
 int servoCAngle;
 int servoDAngle;
 
+// Variables to store the potentiometer positions:
 int potentiometerA;
 int potentiometerB;
 int potentiometerC;
@@ -90,11 +91,7 @@ float scaleD;
 
 void setup()
 {
-  potentiometerA = 0;
-  potentiometerB = 0;
-  potentiometerC = 0;
-  potentiometerD = 0;
-  potentiometerE = 0;
+  // Serial.begin(9600); //  setup serial
 
   servoARange = servoAMaxAngle - servoAMinAngle;
   servoBRange = servoBMaxAngle - servoBMinAngle;
@@ -106,14 +103,9 @@ void setup()
   scaleC = servoCRange / 1024.0;
   scaleD = servoDRange / 1024.0;
 
-  Serial.begin(9600); //  setup serial
-  // Attach the Servo variable to a pin:
   servoA.attach(servoAPin);
-
   servoB.attach(servoBPin);
-
   servoC.attach(servoCPin);
-
   servoD.attach(servoDPin);
 
   pinMode(ledPin, OUTPUT); // sets the pin as output
@@ -122,24 +114,17 @@ void setup()
 void loop()
 {
   potentiometerA = analogRead(potentiometerAPin); // read the input pin
-
   potentiometerB = analogRead(potentiometerBPin); // read the input pin
-
   potentiometerC = analogRead(potentiometerCPin); // read the input pin
-
   potentiometerD = analogRead(potentiometerDPin); // read the input pin
-
   potentiometerE = analogRead(potentiometerEPin); // read the input pin
 
   servoAAngle = potentiometerA * scaleA + servoAMinAngle;
   servoA.write(servoAAngle);
-
   servoBAngle = potentiometerB * scaleB + servoBMinAngle;
   servoB.write(servoBAngle);
-
   servoCAngle = potentiometerC * scaleC + servoCMinAngle;
   servoC.write(servoCAngle);
-
   servoDAngle = potentiometerD * scaleD + servoDMinAngle;
   servoD.write(servoDAngle);
 
