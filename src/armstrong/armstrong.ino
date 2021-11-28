@@ -5,17 +5,20 @@ Servo servoA;
 Servo servoB;
 Servo servoC;
 Servo servoD;
+//Servo servoE;
 
 // Define the servo pin:
 #define servoAPin 9
 #define servoBPin 10
 #define servoCPin 11
 #define servoDPin 12
+#define servoEPin 5 //LED
 
 #define servoAInitAngle 90
 #define servoBInitAngle 90
 #define servoCInitAngle 90
 #define servoDInitAngle 90
+#define servoEInitAngle 90
 
 #define servoAMinAngle 0
 #define servoAMaxAngle 180
@@ -25,32 +28,39 @@ Servo servoD;
 #define servoCMaxAngle 180
 #define servoDMinAngle 40
 #define servoDMaxAngle 90
+#define servoEMinAngle 0
+#define servoEMaxAngle 180
 
 #define potentiometerAPin A3
 #define potentiometerBPin A2
 #define potentiometerCPin A0
 #define potentiometerDPin A1
+#define potentiometerEPin A4
 
 // Create a variable to store the servo position:
 int servoAAngle;
 int servoBAngle;
 int servoCAngle;
 int servoDAngle;
+int servoEAngle;
 
 int potentiometerA;
 int potentiometerB;
 int potentiometerC;
 int potentiometerD;
+int potentiometerE;
 
 int servoARange;
 int servoBRange;
 int servoCRange;
 int servoDRange;
+int servoERange;
 
 float scaleA;
 float scaleB;
 float scaleC;
 float scaleD;
+float scaleE;
 
 void setup()
 {
@@ -59,21 +69,25 @@ void setup()
   servoBAngle = servoBInitAngle;
   servoCAngle = servoCInitAngle;
   servoDAngle = servoDInitAngle;
+  servoEAngle = servoEInitAngle;
 
   potentiometerA = 0;
   potentiometerB = 0;
   potentiometerC = 0;
   potentiometerD = 0;
+  potentiometerE = 0;
 
   servoARange = servoAMaxAngle - servoAMinAngle;
   servoBRange = servoBMaxAngle - servoBMinAngle;
   servoCRange = servoCMaxAngle - servoCMinAngle;
   servoDRange = servoDMaxAngle - servoDMinAngle;
+  servoERange = servoEMaxAngle - servoEMinAngle;
 
   scaleA = servoARange / 1024.0;
   scaleB = servoBRange / 1024.0;
   scaleC = servoCRange / 1024.0;
   scaleD = servoDRange / 1024.0;
+  scaleE = servoERange / 1024.0;
 
   Serial.begin(9600); //  setup serial
   // Attach the Servo variable to a pin:
@@ -88,6 +102,11 @@ void setup()
 
   servoD.attach(servoDPin);
   servoD.write(servoDAngle);
+
+  pinMode(servoEPin, OUTPUT);  // sets the pin as output
+
+//  servoE.attach(servoEPin);
+//  servoE.write(servoEAngle);
 }
 
 void loop()
@@ -106,6 +125,11 @@ void loop()
                                                   //   Serial.println(potentiometerD);          // debug value
                                                   //
                                                   //   Serial.println(scaleA);
+  potentiometerE = analogRead(potentiometerEPin); // read the input pin
+                                                  //   Serial.println("E: ");
+                                                  //   Serial.println(potentiometerE);          // debug value
+                                                  //
+                                                  //   Serial.println(scaleA);
 
   servoAAngle = potentiometerA * scaleA + servoAMinAngle;
   servoA.write(servoAAngle);
@@ -121,6 +145,12 @@ void loop()
   //   Serial.println(servoCAngle);
   servoDAngle = potentiometerD * scaleD + servoDMinAngle;
   servoD.write(servoDAngle);
+  //   Serial.println("D angle: ");
+  //   Serial.println(servoDAngle);
+
+  analogWrite(servoEPin, potentiometerE / 4);
+  //  servoEAngle = potentiometerE * scaleE + servoEMinAngle;
+  //  servoE.write(servoEAngle);
   //   Serial.println("D angle: ");
   //   Serial.println(servoDAngle);
 
