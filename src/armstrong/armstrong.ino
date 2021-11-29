@@ -102,10 +102,30 @@ void setup()
   scaleC = servoCRange / 1024.0;
   scaleD = servoDRange / 1024.0;
 
+  // Initialize servos one by one to avoid large curren draw
+  potentiometerA = analogRead(potentiometerAPin); // read the input pin
+  servoAAngle = potentiometerA * scaleA + servoAMinAngle;
   servoA.attach(servoAPin);
+  servoA.write(servoAAngle);
+  delay(1000);
+
+  potentiometerB = analogRead(potentiometerBPin); // read the input pin
+  servoBAngle = potentiometerB * scaleB + servoBMinAngle;
   servoB.attach(servoBPin);
+  servoB.write(servoBAngle);
+  delay(1000);
+
+  potentiometerC = analogRead(potentiometerCPin); // read the input pin
+  servoCAngle = potentiometerC * scaleC + servoCMinAngle;
   servoC.attach(servoCPin);
+  servoC.write(servoCAngle);
+  delay(1000);
+
+  potentiometerD = analogRead(potentiometerDPin); // read the input pin
+  servoDAngle = potentiometerD * scaleD + servoDMinAngle;
   servoD.attach(servoDPin);
+  servoD.write(servoDAngle);
+  delay(1000);
 
   pinMode(ledPin, OUTPUT); // sets the pin as output
 }
