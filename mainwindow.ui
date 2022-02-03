@@ -333,10 +333,10 @@
                  </sizepolicy>
                 </property>
                 <property name="minimum">
-                 <number>-90</number>
+                 <number>-180</number>
                 </property>
                 <property name="maximum">
-                 <number>90</number>
+                 <number>180</number>
                 </property>
                 <property name="wrapping">
                  <bool>false</bool>
@@ -364,10 +364,10 @@
                 <item>
                  <widget class="QDoubleSpinBox" name="doubleSpinBox_az">
                   <property name="minimum">
-                   <double>-90.000000000000000</double>
+                   <double>-180.000000000000000</double>
                   </property>
                   <property name="maximum">
-                   <double>90.000000000000000</double>
+                   <double>180.000000000000000</double>
                   </property>
                  </widget>
                 </item>
@@ -517,10 +517,10 @@
                  </sizepolicy>
                 </property>
                 <property name="minimum">
-                 <number>-90</number>
+                 <number>-180</number>
                 </property>
                 <property name="maximum">
-                 <number>90</number>
+                 <number>180</number>
                 </property>
                 <property name="notchesVisible">
                  <bool>true</bool>
@@ -545,10 +545,10 @@
                 <item>
                  <widget class="QDoubleSpinBox" name="doubleSpinBox_roll">
                   <property name="minimum">
-                   <double>-90.000000000000000</double>
+                   <double>-180.000000000000000</double>
                   </property>
                   <property name="maximum">
-                   <double>90.000000000000000</double>
+                   <double>180.000000000000000</double>
                   </property>
                  </widget>
                 </item>
