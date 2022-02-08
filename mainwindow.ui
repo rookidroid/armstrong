@@ -860,13 +860,13 @@
     <property name="title">
      <string>About</string>
     </property>
-    <addaction name="actionVersion_1_1"/>
+    <addaction name="actionVersion"/>
    </widget>
    <addaction name="menuAbout"/>
   </widget>
-  <action name="actionVersion_1_1">
+  <action name="actionVersion">
    <property name="text">
-    <string>Version 1.2</string>
+    <string>Version 1.3</string>
    </property>
   </action>
  </widget>
