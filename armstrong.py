@@ -1,4 +1,5 @@
 import sys
+import math
 from PySide6 import QtWidgets, QtCore, QtGui
 from PySide6.QtCore import Qt
 from PySide6.QtCore import QThread, QFile
@@ -8,6 +9,31 @@ from pathlib import Path
 import json
 
 from tcpclient import TCPClient
+
+PI = 3.14159265359
+# SPEED_MAX = 50
+YAW_MIN = -180
+YAW_MAX = 180
+PITCH_MIN = -40
+PITCH_MAX = 40
+ROLL_MIN = -180
+ROLL_MAX = 180
+# X_MIN = -100
+# X_MAX = 100
+# Y_MIN = -100
+# Y_MAX = 100
+# Z_MIN = -100
+# Z_MAX = 100
+# TOOL_MIN = 0
+# TOOL_MAX = 200
+THETA_Y_MIN = -90
+THETA_Y_MAX = 90
+THETA_Z_MIN = -90
+THETA_Z_MAX = 90
+AZIMUTH_MIN = -90
+AZIMUTH_MAX = 90
+ELEVATION_MIN = -90
+ELEVATION_MAX = 90
 
 
 class MyApp(QtWidgets.QMainWindow):
@@ -113,6 +139,7 @@ class MyApp(QtWidgets.QMainWindow):
 
         self.ui.comboBox_coord.setCurrentIndex(
             self.config.get('COORDINATE', 0))
+        self.coordinate_changed(self.config.get('COORDINATE', 0))
 
         # TCP Client
         self.config['IP'] = self.config.get('IP', '192.168.0.20')
@@ -144,30 +171,200 @@ class MyApp(QtWidgets.QMainWindow):
             self.ui.label_az.setText('Yaw ( ° )')
             self.ui.label_el.setText('Pitch ( ° )')
             self.ui.label_roll.setText('Roll ( ° )')
+
+            self.ui.dial_az.setMinimum(YAW_MIN)
+            self.ui.dial_az.setMaximum(YAW_MAX)
+            self.ui.doubleSpinBox_az.setMinimum(YAW_MIN)
+            self.ui.doubleSpinBox_az.setMaximum(YAW_MAX)
+
+            self.ui.dial_el.setMinimum(PITCH_MIN)
+            self.ui.dial_el.setMaximum(PITCH_MAX)
+            self.ui.doubleSpinBox_el.setMinimum(PITCH_MIN)
+            self.ui.doubleSpinBox_el.setMaximum(PITCH_MAX)
+
+            self.ui.dial_roll.setMinimum(ROLL_MIN)
+            self.ui.dial_roll.setMaximum(ROLL_MAX)
+            self.ui.doubleSpinBox_roll.setMinimum(ROLL_MIN)
+            self.ui.doubleSpinBox_roll.setMaximum(ROLL_MAX)
         elif idx == 1:
             self.ui.label_az.setText('Horiz. θy ( ° )')
             self.ui.label_el.setText('Vert. θz ( ° )')
             self.ui.label_roll.setText('Roll offset ( ° )')
+
+            self.ui.dial_az.setMinimum(THETA_Y_MIN)
+            self.ui.dial_az.setMaximum(THETA_Y_MAX)
+            self.ui.doubleSpinBox_az.setMinimum(THETA_Y_MIN)
+            self.ui.doubleSpinBox_az.setMaximum(THETA_Y_MAX)
+
+            self.ui.dial_el.setMinimum(THETA_Z_MIN)
+            self.ui.dial_el.setMaximum(THETA_Z_MAX)
+            self.ui.doubleSpinBox_el.setMinimum(THETA_Z_MIN)
+            self.ui.doubleSpinBox_el.setMaximum(THETA_Z_MAX)
+
+            self.ui.dial_roll.setMinimum(ROLL_MIN)
+            self.ui.dial_roll.setMaximum(ROLL_MAX)
+            self.ui.doubleSpinBox_roll.setMinimum(ROLL_MIN)
+            self.ui.doubleSpinBox_roll.setMaximum(ROLL_MAX)
         elif idx == 2:
             self.ui.label_az.setText('Horiz. θy ( ° )')
             self.ui.label_el.setText('Vert. θz ( ° )')
             self.ui.label_roll.setText('Roll offset ( ° )')
+
+            self.ui.dial_az.setMinimum(THETA_Y_MIN)
+            self.ui.dial_az.setMaximum(THETA_Y_MAX)
+            self.ui.doubleSpinBox_az.setMinimum(THETA_Y_MIN)
+            self.ui.doubleSpinBox_az.setMaximum(THETA_Y_MAX)
+
+            self.ui.dial_el.setMinimum(THETA_Z_MIN)
+            self.ui.dial_el.setMaximum(THETA_Z_MAX)
+            self.ui.doubleSpinBox_el.setMinimum(THETA_Z_MIN)
+            self.ui.doubleSpinBox_el.setMaximum(THETA_Z_MAX)
+
+            self.ui.dial_roll.setMinimum(ROLL_MIN)
+            self.ui.dial_roll.setMaximum(ROLL_MAX)
+            self.ui.doubleSpinBox_roll.setMinimum(ROLL_MIN)
+            self.ui.doubleSpinBox_roll.setMaximum(ROLL_MAX)
         elif idx == 3:
             self.ui.label_az.setText('Horiz. θy ( ° )')
             self.ui.label_el.setText('Vert. θz ( ° )')
             self.ui.label_roll.setText('Roll offset ( ° )')
+
+            self.ui.dial_az.setMinimum(THETA_Y_MIN)
+            self.ui.dial_az.setMaximum(THETA_Y_MAX)
+            self.ui.doubleSpinBox_az.setMinimum(THETA_Y_MIN)
+            self.ui.doubleSpinBox_az.setMaximum(THETA_Y_MAX)
+
+            self.ui.dial_el.setMinimum(THETA_Z_MIN)
+            self.ui.dial_el.setMaximum(THETA_Z_MAX)
+            self.ui.doubleSpinBox_el.setMinimum(THETA_Z_MIN)
+            self.ui.doubleSpinBox_el.setMaximum(THETA_Z_MAX)
+
+            self.ui.dial_roll.setMinimum(ROLL_MIN)
+            self.ui.dial_roll.setMaximum(ROLL_MAX)
+            self.ui.doubleSpinBox_roll.setMinimum(ROLL_MIN)
+            self.ui.doubleSpinBox_roll.setMaximum(ROLL_MAX)
         elif idx == 4:
             self.ui.label_az.setText('Azimuth ( ° )')
             self.ui.label_el.setText('Elevation ( ° )')
             self.ui.label_roll.setText('Roll offset ( ° )')
+
+            self.ui.dial_az.setMinimum(AZIMUTH_MIN)
+            self.ui.dial_az.setMaximum(AZIMUTH_MAX)
+            self.ui.doubleSpinBox_az.setMinimum(AZIMUTH_MIN)
+            self.ui.doubleSpinBox_az.setMaximum(AZIMUTH_MAX)
+
+            self.ui.dial_el.setMinimum(ELEVATION_MIN)
+            self.ui.dial_el.setMaximum(ELEVATION_MAX)
+            self.ui.doubleSpinBox_el.setMinimum(ELEVATION_MIN)
+            self.ui.doubleSpinBox_el.setMaximum(ELEVATION_MAX)
+
+            self.ui.dial_roll.setMinimum(ROLL_MIN)
+            self.ui.dial_roll.setMaximum(ROLL_MAX)
+            self.ui.doubleSpinBox_roll.setMinimum(ROLL_MIN)
+            self.ui.doubleSpinBox_roll.setMaximum(ROLL_MAX)
         elif idx == 5:
             self.ui.label_az.setText('Azimuth ( ° )')
             self.ui.label_el.setText('Elevation ( ° )')
             self.ui.label_roll.setText('Roll offset ( ° )')
+
+            self.ui.dial_az.setMinimum(AZIMUTH_MIN)
+            self.ui.dial_az.setMaximum(AZIMUTH_MAX)
+            self.ui.doubleSpinBox_az.setMinimum(AZIMUTH_MIN)
+            self.ui.doubleSpinBox_az.setMaximum(AZIMUTH_MAX)
+
+            self.ui.dial_el.setMinimum(ELEVATION_MIN)
+            self.ui.dial_el.setMaximum(ELEVATION_MAX)
+            self.ui.doubleSpinBox_el.setMinimum(ELEVATION_MIN)
+            self.ui.doubleSpinBox_el.setMaximum(ELEVATION_MAX)
+
+            self.ui.dial_roll.setMinimum(ROLL_MIN)
+            self.ui.dial_roll.setMaximum(ROLL_MAX)
+            self.ui.doubleSpinBox_roll.setMinimum(ROLL_MIN)
+            self.ui.doubleSpinBox_roll.setMaximum(ROLL_MAX)
         elif idx == 6:
             self.ui.label_az.setText('Azimuth ( ° )')
             self.ui.label_el.setText('Elevation ( ° )')
             self.ui.label_roll.setText('Roll offset ( ° )')
+
+            self.ui.dial_az.setMinimum(AZIMUTH_MIN)
+            self.ui.dial_az.setMaximum(AZIMUTH_MAX)
+            self.ui.doubleSpinBox_az.setMinimum(AZIMUTH_MIN)
+            self.ui.doubleSpinBox_az.setMaximum(AZIMUTH_MAX)
+
+            self.ui.dial_el.setMinimum(ELEVATION_MIN)
+            self.ui.dial_el.setMaximum(ELEVATION_MAX)
+            self.ui.doubleSpinBox_el.setMinimum(ELEVATION_MIN)
+            self.ui.doubleSpinBox_el.setMaximum(ELEVATION_MAX)
+
+            self.ui.dial_roll.setMinimum(ROLL_MIN)
+            self.ui.dial_roll.setMaximum(ROLL_MAX)
+            self.ui.doubleSpinBox_roll.setMinimum(ROLL_MIN)
+            self.ui.doubleSpinBox_roll.setMaximum(ROLL_MAX)
+
+    def doa_backmount_yawpitch(self, theta_h, theta_v, roll_offset):
+        theta_h_rad = theta_h/180.0*PI
+        theta_v_rad = theta_v/180.0*PI
+
+        yaw = -theta_h
+        pitch = math.asin(math.sin(theta_v_rad)/math.cos(theta_h_rad))/PI*180.0
+        roll = roll_offset
+        return [yaw, pitch, roll]
+
+    def doa_backmount_yawroll(self, theta_h, theta_v, roll_offset):
+        theta_h_rad = theta_h/180.0*PI
+        theta_v_rad = theta_v/180.0*PI
+
+        yaw = -math.asin(math.sin(theta_v_rad)/math.sin(math.atan2(
+            math.sin(theta_v_rad), math.sin(theta_h_rad))))/PI*180.0
+        pitch = 0.0
+        roll = -math.atan2(math.sin(theta_v_rad),
+                           math.sin(theta_h_rad))/PI*180.0+roll_offset
+
+        return [yaw, pitch, roll]
+
+    def doa_sidemount_yawroll(self, theta_h, theta_v, roll_offset):
+        theta_h_rad = theta_h/180.0*PI
+        theta_v_rad = theta_v/180.0*PI
+
+        yaw = theta_v+90.0
+        pitch = 0.0
+        roll = -math.cos(math.sin(theta_h_rad) /
+                         math.cos(theta_v_rad))/PI*180.0+roll_offset
+
+        return [yaw, pitch, roll]
+
+    def det_backmount_yawpitch(self, azimuth, elevation, roll_offset):
+        az_rad = azimuth/180.0*PI
+        el_rad = elevation/180.0*PI
+
+        yaw = -math.asin(math.sin(az_rad)*math.cos(el_rad))/PI*180.0
+        pitch = math.asin(math.sin(
+            el_rad)/math.cos(math.asin(math.sin(az_rad)*math.cos(el_rad))))/PI*180.0
+        roll = roll_offset
+
+        return [yaw, pitch, roll]
+
+    def det_backmount_yawroll(self, azimuth, elevation, roll_offset):
+        az_rad = azimuth/180.0*PI
+        el_rad = elevation/180.0*PI
+
+        yaw = -math.asin(math.sin(el_rad) /
+                         math.sin(math.atan2(math.tan(el_rad), math.sin(az_rad))))/PI*180.0
+        pitch = 0.0
+        roll = -math.atan2(math.tan(el_rad), math.sin(az_rad)
+                           )/PI*180.0+roll_offset
+
+        return [yaw, pitch, roll]
+
+    def det_sidemount_yawroll(self, azimuth, elevation, roll_offset):
+        az_rad = azimuth/180.0*PI
+        el_rad = elevation/180.0*PI
+
+        yaw = elevation+90.0
+        pitch = 0.0
+        roll = 90.0-azimuth+roll_offset
+
+        return [yaw, pitch, roll]
 
     def on_load_button_clicked(self):
         tsk_cmd = str(2.0)
