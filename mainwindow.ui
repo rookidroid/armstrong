@@ -521,7 +521,7 @@
              </property>
              <layout class="QVBoxLayout" name="verticalLayout_10">
               <item>
-               <widget class="QComboBox" name="comboBox"/>
+               <widget class="QComboBox" name="comboBox_coord"/>
               </item>
               <item>
                <layout class="QHBoxLayout" name="horizontalLayout_20">

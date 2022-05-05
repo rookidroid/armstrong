@@ -33,12 +33,6 @@ class MyApp(QtWidgets.QMainWindow):
         self.ui.pushButton_ctrl.clicked.connect(
             self.on_ctrl_connect_button_clicked
         )
-        # self.ui.pushButton_cmd.clicked.connect(
-        #     self.connect_cmd_port
-        # )
-        # self.ui.pushButton_init.clicked.connect(
-        #     self.on_init_button_clicked
-        # )
 
         self.ui.pushButton_load.clicked.connect(
             self.on_load_button_clicked
@@ -99,10 +93,26 @@ class MyApp(QtWidgets.QMainWindow):
             self.tool_spinbox
         )
 
+        self.ui.comboBox_coord.currentIndexChanged.connect(
+            self.coordinate_changed
+        )
+
         self.ui.show()
 
     def init_ui(self):
         self.ui.groupBox_ctrl.setEnabled(False)
+
+        self.ui.comboBox_coord.addItems([
+            'Robot Coordinate',
+            'Radar DoA (Backmount using Yaw and Pitch)',
+            'Radar DoA (Backmount using Yaw and Roll)',
+            'Radar DoA (Sidemount using Yaw and Roll)',
+            'Radar Detection (Backmount using Yaw and Pitch)',
+            'Radar Detection (Backmount using Yaw and Roll)',
+            'Radar Detection (Sidemount using Yaw and Roll)'])
+
+        self.ui.comboBox_coord.setCurrentIndex(
+            self.config.get('COORDINATE', 0))
 
         # TCP Client
         self.config['IP'] = self.config.get('IP', '192.168.0.20')
@@ -125,6 +135,39 @@ class MyApp(QtWidgets.QMainWindow):
             json.dump(self.config, open('config.json', 'w+'))
         except PermissionError as err:
             pass
+
+    def coordinate_changed(self, idx):
+        self.config['COORDINATE'] = self.ui.comboBox_coord.currentIndex()
+        self.save_config()
+
+        if idx == 0:
+            self.ui.label_az.setText('Yaw ( ° )')
+            self.ui.label_el.setText('Pitch ( ° )')
+            self.ui.label_roll.setText('Roll ( ° )')
+        elif idx == 1:
+            self.ui.label_az.setText('Horiz. θy ( ° )')
+            self.ui.label_el.setText('Vert. θz ( ° )')
+            self.ui.label_roll.setText('Roll offset ( ° )')
+        elif idx == 2:
+            self.ui.label_az.setText('Horiz. θy ( ° )')
+            self.ui.label_el.setText('Vert. θz ( ° )')
+            self.ui.label_roll.setText('Roll offset ( ° )')
+        elif idx == 3:
+            self.ui.label_az.setText('Horiz. θy ( ° )')
+            self.ui.label_el.setText('Vert. θz ( ° )')
+            self.ui.label_roll.setText('Roll offset ( ° )')
+        elif idx == 4:
+            self.ui.label_az.setText('Azimuth ( ° )')
+            self.ui.label_el.setText('Elevation ( ° )')
+            self.ui.label_roll.setText('Roll offset ( ° )')
+        elif idx == 5:
+            self.ui.label_az.setText('Azimuth ( ° )')
+            self.ui.label_el.setText('Elevation ( ° )')
+            self.ui.label_roll.setText('Roll offset ( ° )')
+        elif idx == 6:
+            self.ui.label_az.setText('Azimuth ( ° )')
+            self.ui.label_el.setText('Elevation ( ° )')
+            self.ui.label_roll.setText('Roll offset ( ° )')
 
     def on_load_button_clicked(self):
         tsk_cmd = str(2.0)
