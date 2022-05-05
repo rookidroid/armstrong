@@ -300,6 +300,7 @@ class MyApp(QtWidgets.QMainWindow):
             self.ui.dial_roll.setMaximum(ROLL_MAX)
             self.ui.doubleSpinBox_roll.setMinimum(ROLL_MIN)
             self.ui.doubleSpinBox_roll.setMaximum(ROLL_MAX)
+        self.ui.pushButton_set.setEnabled(True)
 
     def doa_backmount_yawpitch(self, theta_h, theta_v, roll_offset):
         theta_h_rad = theta_h/180.0*PI
@@ -308,7 +309,7 @@ class MyApp(QtWidgets.QMainWindow):
         yaw = -theta_h
         pitch = math.asin(math.sin(theta_v_rad)/math.cos(theta_h_rad))/PI*180.0
         roll = roll_offset
-        return [yaw, pitch, roll]
+        return yaw, pitch, roll
 
     def doa_backmount_yawroll(self, theta_h, theta_v, roll_offset):
         theta_h_rad = theta_h/180.0*PI
@@ -320,7 +321,7 @@ class MyApp(QtWidgets.QMainWindow):
         roll = -math.atan2(math.sin(theta_v_rad),
                            math.sin(theta_h_rad))/PI*180.0+roll_offset
 
-        return [yaw, pitch, roll]
+        return yaw, pitch, roll
 
     def doa_sidemount_yawroll(self, theta_h, theta_v, roll_offset):
         theta_h_rad = theta_h/180.0*PI
@@ -331,7 +332,7 @@ class MyApp(QtWidgets.QMainWindow):
         roll = -math.cos(math.sin(theta_h_rad) /
                          math.cos(theta_v_rad))/PI*180.0+roll_offset
 
-        return [yaw, pitch, roll]
+        return yaw, pitch, roll
 
     def det_backmount_yawpitch(self, azimuth, elevation, roll_offset):
         az_rad = azimuth/180.0*PI
@@ -339,10 +340,11 @@ class MyApp(QtWidgets.QMainWindow):
 
         yaw = -math.asin(math.sin(az_rad)*math.cos(el_rad))/PI*180.0
         pitch = math.asin(math.sin(
-            el_rad)/math.cos(math.asin(math.sin(az_rad)*math.cos(el_rad))))/PI*180.0
+            el_rad)/math.cos(
+                math.asin(math.sin(az_rad)*math.cos(el_rad))))/PI*180.0
         roll = roll_offset
 
-        return [yaw, pitch, roll]
+        return yaw, pitch, roll
 
     def det_backmount_yawroll(self, azimuth, elevation, roll_offset):
         az_rad = azimuth/180.0*PI
@@ -354,7 +356,7 @@ class MyApp(QtWidgets.QMainWindow):
         roll = -math.atan2(math.tan(el_rad), math.sin(az_rad)
                            )/PI*180.0+roll_offset
 
-        return [yaw, pitch, roll]
+        return yaw, pitch, roll
 
     def det_sidemount_yawroll(self, azimuth, elevation, roll_offset):
         az_rad = azimuth/180.0*PI
@@ -364,7 +366,7 @@ class MyApp(QtWidgets.QMainWindow):
         pitch = 0.0
         roll = 90.0-azimuth+roll_offset
 
-        return [yaw, pitch, roll]
+        return yaw, pitch, roll
 
     def on_load_button_clicked(self):
         tsk_cmd = str(2.0)
@@ -407,22 +409,62 @@ class MyApp(QtWidgets.QMainWindow):
     def on_set_button_clicked(self):
         self.ui.pushButton_set.setEnabled(False)
         tsk_cmd = str(3.0)
-        azi = str(self.ui.doubleSpinBox_az.value())
-        ele = str(self.ui.doubleSpinBox_el.value())
-        rol = str(self.ui.doubleSpinBox_roll.value())
-        x_offset = str(self.ui.doubleSpinBox_x.value())
-        y_offset = str(self.ui.doubleSpinBox_y.value())
-        z_offset = str(self.ui.doubleSpinBox_z.value())
-        tool_offset = str(self.ui.doubleSpinBox_tool.value())
+        angle1 = self.ui.doubleSpinBox_az.value()
+        angle2 = self.ui.doubleSpinBox_el.value()
+        angle3 = self.ui.doubleSpinBox_roll.value()
 
-        msg = tsk_cmd+','+azi+','+ele+','+rol+','+x_offset + \
-            ','+y_offset+','+z_offset+','+tool_offset+'\r\n'
+        coord = self.ui.comboBox_coord.currentIndex()
+        if coord == 0:
+            yaw = angle1
+            pitch = angle2
+            roll = angle3
+        elif coord == 1:
+            if math.sqrt(angle1**2+angle2**2) > 90.0:
+                self.display_message( 'Error: DoA out of range')
+                return
+            yaw, pitch, roll = self.doa_backmount_yawpitch(
+                angle1, angle2, angle3)
+        elif coord == 2:
+            if math.sqrt(angle1**2+angle2**2) > 90.0:
+                self.display_message( 'Error: DoA out of range')
+                return
+            yaw, pitch, roll = self.doa_backmount_yawroll(
+                angle1, angle2, angle3)
+        elif coord == 3:
+            if math.sqrt(angle1**2+angle2**2) > 90.0:
+                self.display_message( 'Error: DoA out of range')
+                return
+            yaw, pitch, roll = self.doa_sidemount_yawroll(
+                angle1, angle2, angle3)
+        elif coord == 4:
+            yaw, pitch, roll = self.det_backmount_yawpitch(
+                angle1, angle2, angle3)
+        elif coord == 5:
+            yaw, pitch, roll = self.det_backmount_yawroll(
+                angle1, angle2, angle3)
+        elif coord == 6:
+            yaw, pitch, roll = self.det_sidemount_yawroll(
+                angle1, angle2, angle3)
 
-        self.display_message(msg)
-        self.cmd_socket.sendrecv(msg)
+        if yaw < YAW_MIN or yaw > YAW_MAX or pitch < PITCH_MIN \
+                or pitch > PITCH_MAX or roll < ROLL_MIN or roll > ROLL_MAX:
+            self.display_message(
+                'Error: unable to set robot position [' +
+                str(yaw)+','+str(pitch)+','+str(roll)+']')
+        else:
+            x_offset = str(self.ui.doubleSpinBox_x.value())
+            y_offset = str(self.ui.doubleSpinBox_y.value())
+            z_offset = str(self.ui.doubleSpinBox_z.value())
+            tool_offset = str(self.ui.doubleSpinBox_tool.value())
 
-        self.config['TOOL'] = self.ui.doubleSpinBox_tool.value()
-        self.save_config()
+            msg = tsk_cmd+','+str(yaw)+','+str(pitch)+','+str(roll)+','+x_offset + \
+                ','+y_offset+','+z_offset+','+tool_offset+'\r\n'
+
+            self.display_message(msg)
+            self.cmd_socket.sendrecv(msg)
+
+            self.config['TOOL'] = self.ui.doubleSpinBox_tool.value()
+            self.save_config()
 
     def x_slider(self, val):
         self.ui.doubleSpinBox_x.setValue(val)
