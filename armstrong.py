@@ -457,7 +457,7 @@ class MyApp(QtWidgets.QMainWindow):
             z_offset = str(self.ui.doubleSpinBox_z.value())
             tool_offset = str(self.ui.doubleSpinBox_tool.value())
 
-            msg = tsk_cmd+','+str(yaw)+','+str(pitch)+','+str(roll)+','+x_offset + \
+            msg = tsk_cmd+','+str(-yaw)+','+str(pitch)+','+str(roll)+','+x_offset + \
                 ','+y_offset+','+z_offset+','+tool_offset+'\r\n'
 
             self.display_message(msg)
