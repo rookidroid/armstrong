@@ -33,12 +33,12 @@ class MyApp(QtWidgets.QMainWindow):
         self.ui.pushButton_ctrl.clicked.connect(
             self.on_ctrl_connect_button_clicked
         )
-        self.ui.pushButton_cmd.clicked.connect(
-            self.on_cmd_connect_button_clicked
-        )
-        self.ui.pushButton_init.clicked.connect(
-            self.on_init_button_clicked
-        )
+        # self.ui.pushButton_cmd.clicked.connect(
+        #     self.on_cmd_connect_button_clicked
+        # )
+        # self.ui.pushButton_init.clicked.connect(
+        #     self.on_init_button_clicked
+        # )
 
         self.ui.pushButton_load.clicked.connect(
             self.on_load_button_clicked
@@ -103,8 +103,6 @@ class MyApp(QtWidgets.QMainWindow):
 
     def init_ui(self):
         self.ui.groupBox_ctrl.setEnabled(False)
-        self.ui.groupBox_predefine.setEnabled(False)
-        self.ui.groupBox_position.setEnabled(False)
 
         # TCP Client
         self.config['IP'] = self.config.get('IP', '192.168.0.20')
@@ -235,8 +233,94 @@ class MyApp(QtWidgets.QMainWindow):
         self.ui.dial_roll.setValue(val)
         self.ui.pushButton_set.setEnabled(True)
 
-    def on_init_button_clicked(self):
-        if self.ui.pushButton_init.text() == 'Initialize':
+    def on_ctrl_connect_button_clicked(self):
+        if self.ui.pushButton_ctrl.text() == 'Connect and Initialize':
+            self.ui.pushButton_ctrl.setEnabled(False)
+
+            self.ui.lineEdit_ip.setEnabled(False)
+            self.ui.lineEdit_ctrl_port.setEnabled(False)
+            self.ui.lineEdit_cmd_port.setEnabled(False)
+            self.ui.spinBox_speed.setEnabled(False)
+
+            self.ctrl_thread = QThread()
+            self.ctrl_socket = TCPClient(
+                self.ui.lineEdit_ip.text(),
+                int(self.ui.lineEdit_ctrl_port.text()))
+
+            self.ctrl_socket.status.connect(self.on_ctrl_status_update)
+            self.ctrl_socket.message.connect(self.on_tcp_client_message_ready)
+            self.ctrl_thread.started.connect(self.ctrl_socket.start)
+            self.ctrl_socket.moveToThread(self.ctrl_thread)
+            self.ctrl_thread.start()
+
+        elif self.ui.pushButton_ctrl.text() == 'Stop and Disconnect':
+            self.ui.pushButton_init.setText('Initialize')
+            self.display_message('1;1;STOP')
+            self.ctrl_socket.sendrecv('1;1;STOP')
+            self.display_message('1;1;SRVOFF')
+            self.ctrl_socket.sendrecv('1;1;SRVOFF')
+            self.display_message('1;1;CNTLOFF')
+            self.ctrl_socket.sendrecv('1;1;CNTLOFF')
+
+            self.ui.pushButton_ctrl.setEnabled(False)
+            self.ctrl_socket.close()
+            self.cmd_socket.close()
+
+    def on_ctrl_status_update(self, status, addr):
+        if status == TCPClient.STOP:
+            self.ui.pushButton_ctrl.setText('Connect and Initialize')
+
+            self.ctrl_socket.status.disconnect()
+            self.ctrl_socket.message.disconnect()
+            self.ctrl_thread.quit()
+
+            self.ui.lineEdit_ip.setEnabled(True)
+            self.ui.lineEdit_ctrl_port.setEnabled(True)
+            self.ui.lineEdit_cmd_port.setEnabled(True)
+            self.ui.spinBox_speed.setEnabled(True)
+
+            self.ui.groupBox_ctrl.setEnabled(False)
+
+        elif status == TCPClient.CONNECTED:
+            self.on_cmd_connect_button_clicked()
+
+        # self.ui.pushButton_ctrl.setEnabled(True)
+
+    def on_cmd_connect_button_clicked(self):
+        self.cmd_thread = QThread()
+        self.cmd_socket = TCPClient(
+            self.ui.lineEdit_ip.text(),
+            int(self.ui.lineEdit_cmd_port.text()))
+
+        self.cmd_socket.status.connect(self.on_cmd_status_update)
+        self.cmd_socket.message.connect(self.on_tcp_client_message_ready)
+        self.cmd_thread.started.connect(self.cmd_socket.start)
+        self.cmd_socket.moveToThread(self.cmd_thread)
+        self.cmd_thread.start()
+
+    def on_cmd_status_update(self, status, addr):
+        if status == TCPClient.STOP:
+            self.ctrl_socket.close()
+
+            self.ui.pushButton_ctrl.setText('Connect and Initialize')
+
+            self.cmd_socket.status.disconnect()
+            self.cmd_socket.message.disconnect()
+            self.cmd_thread.quit()
+
+            self.ui.lineEdit_ip.setEnabled(True)
+            self.ui.lineEdit_ctrl_port.setEnabled(True)
+            self.ui.lineEdit_cmd_port.setEnabled(True)
+            self.ui.spinBox_speed.setEnabled(True)
+
+            self.ui.groupBox_ctrl.setEnabled(False)
+
+        elif status == TCPClient.CONNECTED:
+            self.config['IP'] = self.ui.lineEdit_ip.text()
+            self.config['CTRL_PORT'] = self.ui.lineEdit_ctrl_port.text()
+            self.config['CMD_PORT'] = self.ui.lineEdit_cmd_port.text()
+            self.save_config()
+
             self.ui.pushButton_init.setText('Stop')
 
             speed = self.ui.spinBox_speed.value()
@@ -268,129 +352,8 @@ class MyApp(QtWidgets.QMainWindow):
                 self.ui.groupBox_position.setEnabled(True)
                 self.ui.pushButton_set.setEnabled(True)
 
-        elif self.ui.pushButton_init.text() == 'Stop':
-            self.ui.pushButton_init.setText('Initialize')
-            self.display_message('1;1;STOP')
-            self.ctrl_socket.sendrecv('1;1;STOP')
-            self.display_message('1;1;SRVOFF')
-            self.ctrl_socket.sendrecv('1;1;SRVOFF')
-            self.display_message('1;1;CNTLOFF')
-            self.ctrl_socket.sendrecv('1;1;CNTLOFF')
-
-            self.ui.groupBox_predefine.setEnabled(False)
-            self.ui.groupBox_position.setEnabled(False)
-
-    def on_ctrl_connect_button_clicked(self):
-        if self.ui.pushButton_ctrl.text() == 'Connect Control Port':
-            self.ui.pushButton_ctrl.setEnabled(False)
-
-            self.ctrl_thread = QThread()
-            self.ctrl_socket = TCPClient(
-                self.ui.lineEdit_ip.text(),
-                int(self.ui.lineEdit_ctrl_port.text()))
-
-            self.ctrl_socket.status.connect(self.on_ctrl_status_update)
-            self.ctrl_socket.message.connect(self.on_tcp_client_message_ready)
-            self.ctrl_thread.started.connect(self.ctrl_socket.start)
-
-            self.ctrl_socket.moveToThread(self.ctrl_thread)
-
-            self.ctrl_thread.start()
-        elif self.ui.pushButton_ctrl.text() == 'Disconnect Control Port':
-            self.ui.pushButton_ctrl.setEnabled(False)
-            self.ctrl_socket.close()
-
-    def on_ctrl_status_update(self, status, addr):
-        if status == TCPClient.STOP:
-            self.ctrl_socket.status.disconnect()
-            self.ctrl_socket.message.disconnect()
-
-            self.ui.pushButton_ctrl.setText('Connect Control Port')
-            self.ctrl_thread.quit()
-
-            self.ui.lineEdit_ctrl_port.setEnabled(True)
-            self.ui.groupBox_ctrl.setEnabled(False)
-            self.ui.groupBox_predefine.setEnabled(False)
-            self.ui.groupBox_position.setEnabled(False)
-
-            self.ui.pushButton_init.setText('Initialize')
-
-            if self.ui.lineEdit_cmd_port.isEnabled():
-                self.ui.lineEdit_ip.setEnabled(True)
-
-        elif status == TCPClient.CONNECTED:
-            self.ui.pushButton_ctrl.setText('Disconnect Control Port')
-
-            self.ui.lineEdit_ip.setEnabled(False)
-            self.ui.lineEdit_ctrl_port.setEnabled(False)
-
-            self.ui.pushButton_init.setText('Initialize')
-
-            if not self.ui.lineEdit_cmd_port.isEnabled():
-                self.ui.groupBox_ctrl.setEnabled(True)
-
-            self.config['IP'] = self.ui.lineEdit_ip.text()
-            self.config['CTRL_PORT'] = self.ui.lineEdit_ctrl_port.text()
-            self.config['CMD_PORT'] = self.ui.lineEdit_cmd_port.text()
-            self.save_config()
-
+        self.ui.pushButton_ctrl.setText('Stop and Disconnect')
         self.ui.pushButton_ctrl.setEnabled(True)
-
-    def on_cmd_connect_button_clicked(self):
-        if self.ui.pushButton_cmd.text() == 'Connect Command Port':
-            self.ui.pushButton_cmd.setEnabled(False)
-
-            self.cmd_thread = QThread()
-            self.cmd_socket = TCPClient(
-                self.ui.lineEdit_ip.text(),
-                int(self.ui.lineEdit_cmd_port.text()))
-
-            self.cmd_socket.status.connect(self.on_cmd_status_update)
-            self.cmd_socket.message.connect(self.on_tcp_client_message_ready)
-            self.cmd_thread.started.connect(self.cmd_socket.start)
-
-            self.cmd_socket.moveToThread(self.cmd_thread)
-
-            self.cmd_thread.start()
-        elif self.ui.pushButton_cmd.text() == 'Disconnect Command Port':
-            self.ui.pushButton_cmd.setEnabled(False)
-            self.cmd_socket.close()
-
-    def on_cmd_status_update(self, status, addr):
-        if status == TCPClient.STOP:
-            self.cmd_socket.status.disconnect()
-            self.cmd_socket.message.disconnect()
-
-            self.ui.pushButton_cmd.setText('Connect Command Port')
-            self.cmd_thread.quit()
-
-            self.ui.lineEdit_cmd_port.setEnabled(True)
-            self.ui.groupBox_ctrl.setEnabled(False)
-            self.ui.groupBox_predefine.setEnabled(False)
-            self.ui.groupBox_position.setEnabled(False)
-
-            self.ui.pushButton_init.setText('Initialize')
-
-            if self.ui.lineEdit_ctrl_port.isEnabled():
-                self.ui.lineEdit_ip.setEnabled(True)
-
-        elif status == TCPClient.CONNECTED:
-            self.ui.pushButton_cmd.setText('Disconnect Command Port')
-
-            self.ui.lineEdit_ip.setEnabled(False)
-            self.ui.lineEdit_cmd_port.setEnabled(False)
-
-            self.ui.pushButton_init.setText('Initialize')
-
-            if not self.ui.lineEdit_ctrl_port.isEnabled():
-                self.ui.groupBox_ctrl.setEnabled(True)
-
-            self.config['IP'] = self.ui.lineEdit_ip.text()
-            self.config['CTRL_PORT'] = self.ui.lineEdit_ctrl_port.text()
-            self.config['CMD_PORT'] = self.ui.lineEdit_cmd_port.text()
-            self.save_config()
-
-        self.ui.pushButton_cmd.setEnabled(True)
 
     def on_tcp_client_message_ready(self, msg):
         self.ui.textBrowser.append(
