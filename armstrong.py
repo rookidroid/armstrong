@@ -34,7 +34,7 @@ class MyApp(QtWidgets.QMainWindow):
             self.on_ctrl_connect_button_clicked
         )
         # self.ui.pushButton_cmd.clicked.connect(
-        #     self.on_cmd_connect_button_clicked
+        #     self.connect_cmd_port
         # )
         # self.ui.pushButton_init.clicked.connect(
         #     self.on_init_button_clicked
@@ -254,7 +254,7 @@ class MyApp(QtWidgets.QMainWindow):
             self.ctrl_thread.start()
 
         elif self.ui.pushButton_ctrl.text() == 'Stop and Disconnect':
-            self.ui.pushButton_init.setText('Initialize')
+
             self.display_message('1;1;STOP')
             self.ctrl_socket.sendrecv('1;1;STOP')
             self.display_message('1;1;SRVOFF')
@@ -281,12 +281,12 @@ class MyApp(QtWidgets.QMainWindow):
 
             self.ui.groupBox_ctrl.setEnabled(False)
 
+            self.ui.pushButton_ctrl.setEnabled(True)
+
         elif status == TCPClient.CONNECTED:
-            self.on_cmd_connect_button_clicked()
+            self.connect_cmd_port()
 
-        # self.ui.pushButton_ctrl.setEnabled(True)
-
-    def on_cmd_connect_button_clicked(self):
+    def connect_cmd_port(self):
         self.cmd_thread = QThread()
         self.cmd_socket = TCPClient(
             self.ui.lineEdit_ip.text(),
@@ -321,7 +321,7 @@ class MyApp(QtWidgets.QMainWindow):
             self.config['CMD_PORT'] = self.ui.lineEdit_cmd_port.text()
             self.save_config()
 
-            self.ui.pushButton_init.setText('Stop')
+            # self.ui.pushButton_init.setText('Stop')
 
             speed = self.ui.spinBox_speed.value()
 
@@ -348,11 +348,9 @@ class MyApp(QtWidgets.QMainWindow):
                 self.config['SPEED'] = speed
                 self.save_config()
 
-                self.ui.groupBox_predefine.setEnabled(True)
-                self.ui.groupBox_position.setEnabled(True)
-                self.ui.pushButton_set.setEnabled(True)
+                self.ui.groupBox_ctrl.setEnabled(True)
 
-        self.ui.pushButton_ctrl.setText('Stop and Disconnect')
+            self.ui.pushButton_ctrl.setText('Stop and Disconnect')
         self.ui.pushButton_ctrl.setEnabled(True)
 
     def on_tcp_client_message_ready(self, msg):
