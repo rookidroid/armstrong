@@ -306,57 +306,99 @@ class MyApp(QtWidgets.QMainWindow):
         theta_h_rad = theta_h/180.0*PI
         theta_v_rad = theta_v/180.0*PI
 
+        err = ''
+
         yaw = -theta_h
-        pitch = math.asin(math.sin(theta_v_rad)/math.cos(theta_h_rad))/PI*180.0
+        if math.cos(theta_h_rad) == 0 and math.sin(theta_v_rad) == 0:
+            pitch = 0
+        elif abs(math.sin(theta_v_rad)/math.cos(theta_h_rad)) <= 1:
+            pitch = math.asin(math.sin(theta_v_rad) /
+                              math.cos(theta_h_rad))/PI*180.0
+        else:
+            pitch = 0
+            err = 'DoA error: impossible DoA angle'
+            return 0, 0, 0, err
         roll = roll_offset
-        return yaw, pitch, roll
+        return yaw, pitch, roll, err
 
     def doa_backmount_yawroll(self, theta_h, theta_v, roll_offset):
         theta_h_rad = theta_h/180.0*PI
         theta_v_rad = theta_v/180.0*PI
 
-        yaw = -math.asin(math.sin(theta_v_rad)/math.sin(math.atan2(
-            math.sin(theta_v_rad), math.sin(theta_h_rad))))/PI*180.0
+        err = ''
+
+        if theta_v == 0:
+            yaw = theta_h
+        elif abs(math.sin(theta_v_rad)/math.sin(math.atan2(
+                math.sin(theta_v_rad), math.sin(theta_h_rad)))) <= 1:
+            yaw = -math.asin(math.sin(theta_v_rad)/math.sin(math.atan2(
+                math.sin(theta_v_rad), math.sin(theta_h_rad))))/PI*180.0
+        else:
+            yaw = 0
+            err = 'DoA error: impossible DoA angle'
+            return 0, 0, 0, err
+
         pitch = 0.0
         roll = -math.atan2(math.sin(theta_v_rad),
                            math.sin(theta_h_rad))/PI*180.0+roll_offset
 
-        return yaw, pitch, roll
+        return yaw, pitch, roll, err
 
     def doa_sidemount_yawroll(self, theta_h, theta_v, roll_offset):
         theta_h_rad = theta_h/180.0*PI
         theta_v_rad = theta_v/180.0*PI
 
+        err = ''
+
         yaw = theta_v+90.0
         pitch = 0.0
-        roll = -math.cos(math.sin(theta_h_rad) /
-                         math.cos(theta_v_rad))/PI*180.0+roll_offset
+        if theta_v == 90 and theta_h == 0:
+            roll = 90+roll_offset
+        elif theta_v == -90 and theta_h == 0:
+            roll = 90+roll_offset
+        elif abs(math.sin(theta_h_rad) / math.cos(theta_v_rad)) <= 1:
+            roll = math.cos(math.sin(theta_h_rad) /
+                            math.cos(theta_v_rad))/PI*180.0+roll_offset
+        else:
+            err = 'DoA error: impossible DoA angle'
+            return 0, 0, 0, err
 
-        return yaw, pitch, roll
+        return yaw, pitch, roll, err
 
     def det_backmount_yawpitch(self, azimuth, elevation, roll_offset):
         az_rad = azimuth/180.0*PI
         el_rad = elevation/180.0*PI
+        err = ''
 
         yaw = -math.asin(math.sin(az_rad)*math.cos(el_rad))/PI*180.0
-        pitch = math.asin(math.sin(
-            el_rad)/math.cos(
-                math.asin(math.sin(az_rad)*math.cos(el_rad))))/PI*180.0
+        if elevation == 0 and azimuth == 90:
+            pitch = 0
+        elif elevation == 0 and azimuth == -90:
+            pitch = 0
+        else:
+            pitch = math.asin(math.sin(
+                el_rad)/math.cos(
+                    math.asin(math.sin(az_rad)*math.cos(el_rad))))/PI*180.0
         roll = roll_offset
 
-        return yaw, pitch, roll
+        return yaw, pitch, roll, err
 
     def det_backmount_yawroll(self, azimuth, elevation, roll_offset):
         az_rad = azimuth/180.0*PI
         el_rad = elevation/180.0*PI
+        err = ''
 
-        yaw = -math.asin(math.sin(el_rad) /
-                         math.sin(math.atan2(math.tan(el_rad), math.sin(az_rad))))/PI*180.0
+        if elevation == 0:
+            yaw = -azimuth
+        else:
+            yaw = -math.asin(math.sin(el_rad) /
+                             math.sin(math.atan2(math.tan(el_rad),
+                                                 math.sin(az_rad))))/PI*180.0
         pitch = 0.0
         roll = -math.atan2(math.tan(el_rad), math.sin(az_rad)
                            )/PI*180.0+roll_offset
 
-        return yaw, pitch, roll
+        return yaw, pitch, roll, err
 
     def det_sidemount_yawroll(self, azimuth, elevation, roll_offset):
         az_rad = azimuth/180.0*PI
@@ -412,6 +454,7 @@ class MyApp(QtWidgets.QMainWindow):
         angle1 = self.ui.doubleSpinBox_az.value()
         angle2 = self.ui.doubleSpinBox_el.value()
         angle3 = self.ui.doubleSpinBox_roll.value()
+        err = ''
 
         coord = self.ui.comboBox_coord.currentIndex()
         if coord == 0:
@@ -419,32 +462,27 @@ class MyApp(QtWidgets.QMainWindow):
             pitch = angle2
             roll = angle3
         elif coord == 1:
-            if math.sqrt(angle1**2+angle2**2) > 90.0:
-                self.display_message( 'Error: DoA out of range')
-                return
-            yaw, pitch, roll = self.doa_backmount_yawpitch(
+            yaw, pitch, roll, err = self.doa_backmount_yawpitch(
                 angle1, angle2, angle3)
         elif coord == 2:
-            if math.sqrt(angle1**2+angle2**2) > 90.0:
-                self.display_message( 'Error: DoA out of range')
-                return
-            yaw, pitch, roll = self.doa_backmount_yawroll(
+            yaw, pitch, roll, err = self.doa_backmount_yawroll(
                 angle1, angle2, angle3)
         elif coord == 3:
-            if math.sqrt(angle1**2+angle2**2) > 90.0:
-                self.display_message( 'Error: DoA out of range')
-                return
-            yaw, pitch, roll = self.doa_sidemount_yawroll(
+            yaw, pitch, roll, err = self.doa_sidemount_yawroll(
                 angle1, angle2, angle3)
         elif coord == 4:
-            yaw, pitch, roll = self.det_backmount_yawpitch(
+            yaw, pitch, roll, err = self.det_backmount_yawpitch(
                 angle1, angle2, angle3)
         elif coord == 5:
-            yaw, pitch, roll = self.det_backmount_yawroll(
+            yaw, pitch, roll, err = self.det_backmount_yawroll(
                 angle1, angle2, angle3)
         elif coord == 6:
-            yaw, pitch, roll = self.det_sidemount_yawroll(
+            yaw, pitch, roll, err = self.det_sidemount_yawroll(
                 angle1, angle2, angle3)
+
+        if err:
+            self.display_message(err)
+            return
 
         if yaw < YAW_MIN or yaw > YAW_MAX or pitch < PITCH_MIN \
                 or pitch > PITCH_MAX or roll < ROLL_MIN or roll > ROLL_MAX:
