@@ -913,7 +913,7 @@
   </widget>
   <action name="actionVersion">
    <property name="text">
-    <string>Version 1.3</string>
+    <string>Version 2.0</string>
    </property>
   </action>
  </widget>
