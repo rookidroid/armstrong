@@ -52,11 +52,11 @@ Servo servoD; // control arm 'up <-> down'
 #define servoAMinAngle 0
 #define servoAMaxAngle 180
 #define servoBMinAngle 80
-#define servoBMaxAngle 150
-#define servoCMinAngle 36
+#define servoBMaxAngle 180
+#define servoCMinAngle 0
 #define servoCMaxAngle 180
-#define servoDMinAngle 40
-#define servoDMaxAngle 90
+#define servoDMinAngle 20
+#define servoDMaxAngle 110
 
 // Define potentiometer pins:
 #define potentiometerAPin A3
