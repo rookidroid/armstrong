@@ -328,7 +328,7 @@ class MyApp(QtWidgets.QMainWindow):
         err = ''
 
         if theta_v == 0:
-            yaw = theta_h
+            yaw = -theta_h
         elif abs(math.sin(theta_v_rad)/math.sin(math.atan2(
                 math.sin(theta_v_rad), math.sin(theta_h_rad)))) <= 1:
             yaw = -math.asin(math.sin(theta_v_rad)/math.sin(math.atan2(
@@ -401,9 +401,6 @@ class MyApp(QtWidgets.QMainWindow):
         return yaw, pitch, roll, err
 
     def det_sidemount_yawroll(self, azimuth, elevation, roll_offset):
-        az_rad = azimuth/180.0*PI
-        el_rad = elevation/180.0*PI
-
         yaw = elevation+90.0
         pitch = 0.0
         roll = 90.0-azimuth+roll_offset
@@ -495,8 +492,8 @@ class MyApp(QtWidgets.QMainWindow):
             z_offset = str(self.ui.doubleSpinBox_z.value())
             tool_offset = str(self.ui.doubleSpinBox_tool.value())
 
-            msg = tsk_cmd+','+str(-yaw)+','+str(pitch)+','+str(roll)+','+x_offset + \
-                ','+y_offset+','+z_offset+','+tool_offset+'\r\n'
+            msg = tsk_cmd+','+str(-yaw)+','+str(pitch)+','+str(roll) +\
+                ','+x_offset + ','+y_offset+','+z_offset+','+tool_offset+'\r\n'
 
             self.display_message(msg)
             self.cmd_socket.sendrecv(msg)
