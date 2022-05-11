@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>907</width>
-    <height>575</height>
+    <height>577</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -913,7 +913,7 @@
   </widget>
   <action name="actionVersion">
    <property name="text">
-    <string>Version 2.0</string>
+    <string>Version 2.1</string>
    </property>
   </action>
  </widget>
