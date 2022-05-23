@@ -132,10 +132,10 @@ class MyApp(QtWidgets.QMainWindow):
             'Robot Coordinate',
             'Radar DoA (Backmount using Yaw and Pitch)',
             'Radar DoA (Backmount using Yaw and Roll)',
-            'Radar DoA (Sidemount using Yaw and Roll)',
+            'Radar DoA (Topmount using Yaw and Roll)',
             'Radar Detection (Backmount using Yaw and Pitch)',
             'Radar Detection (Backmount using Yaw and Roll)',
-            'Radar Detection (Sidemount using Yaw and Roll)'])
+            'Radar Detection (Topmount using Yaw and Roll)'])
 
         self.ui.comboBox_coord.setCurrentIndex(
             self.config.get('COORDINATE', 0))
@@ -344,7 +344,7 @@ class MyApp(QtWidgets.QMainWindow):
 
         return yaw, pitch, roll, err
 
-    def doa_sidemount_yawroll(self, theta_h, theta_v, roll_offset):
+    def doa_topmount_yawroll(self, theta_h, theta_v, roll_offset):
         theta_h_rad = theta_h/180.0*PI
         theta_v_rad = theta_v/180.0*PI
 
@@ -353,12 +353,12 @@ class MyApp(QtWidgets.QMainWindow):
         yaw = theta_v+90.0
         pitch = 0.0
         if theta_v == 90 and theta_h == 0:
-            roll = 90+roll_offset
+            roll = -90+roll_offset
         elif theta_v == -90 and theta_h == 0:
-            roll = 90+roll_offset
+            roll = -90+roll_offset
         elif abs(math.sin(theta_h_rad) / math.cos(theta_v_rad)) <= 1:
-            roll = math.cos(math.sin(theta_h_rad) /
-                            math.cos(theta_v_rad))/PI*180.0+roll_offset
+            roll = math.acos(math.sin(theta_h_rad) /
+                             math.cos(theta_v_rad))/PI*180.0+roll_offset
         else:
             err = 'DoA error: impossible DoA angle'
             return 0, 0, 0, err
@@ -400,12 +400,13 @@ class MyApp(QtWidgets.QMainWindow):
 
         return yaw, pitch, roll, err
 
-    def det_sidemount_yawroll(self, azimuth, elevation, roll_offset):
-        yaw = elevation+90.0
+    def det_topmount_yawroll(self, azimuth, elevation, roll_offset):
+        err = ''
+        yaw = -elevation+90.0
         pitch = 0.0
-        roll = 90.0-azimuth+roll_offset
+        roll = 90.0+azimuth+roll_offset
 
-        return yaw, pitch, roll
+        return yaw, pitch, roll, err
 
     def on_load_button_clicked(self):
         tsk_cmd = str(2.0)
@@ -465,7 +466,7 @@ class MyApp(QtWidgets.QMainWindow):
             yaw, pitch, roll, err = self.doa_backmount_yawroll(
                 angle1, angle2, angle3)
         elif coord == 3:
-            yaw, pitch, roll, err = self.doa_sidemount_yawroll(
+            yaw, pitch, roll, err = self.doa_topmount_yawroll(
                 angle1, angle2, angle3)
         elif coord == 4:
             yaw, pitch, roll, err = self.det_backmount_yawpitch(
@@ -474,7 +475,7 @@ class MyApp(QtWidgets.QMainWindow):
             yaw, pitch, roll, err = self.det_backmount_yawroll(
                 angle1, angle2, angle3)
         elif coord == 6:
-            yaw, pitch, roll, err = self.det_sidemount_yawroll(
+            yaw, pitch, roll, err = self.det_topmount_yawroll(
                 angle1, angle2, angle3)
 
         if err:
