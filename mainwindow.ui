@@ -113,12 +113,15 @@
            <item>
             <widget class="QLabel" name="label_speed">
              <property name="text">
-              <string>Speed Override (%):</string>
+              <string>Speed Override:</string>
              </property>
             </widget>
            </item>
            <item>
             <widget class="QSpinBox" name="spinBox_speed">
+             <property name="suffix">
+              <string> %</string>
+             </property>
              <property name="minimum">
               <number>5</number>
              </property>
@@ -296,7 +299,7 @@
                   <item>
                    <widget class="QLabel" name="label_x">
                     <property name="text">
-                     <string>x offset (mm)</string>
+                     <string>x offset</string>
                     </property>
                    </widget>
                   </item>
@@ -318,6 +321,9 @@
                   </item>
                   <item>
                    <widget class="QDoubleSpinBox" name="doubleSpinBox_x">
+                    <property name="suffix">
+                     <string> mm</string>
+                    </property>
                     <property name="minimum">
                      <double>-100.000000000000000</double>
                     </property>
@@ -349,7 +355,7 @@
                   <item>
                    <widget class="QLabel" name="label_y">
                     <property name="text">
-                     <string>y offset (mm)</string>
+                     <string>y offset</string>
                     </property>
                    </widget>
                   </item>
@@ -374,6 +380,9 @@
                   </item>
                   <item>
                    <widget class="QDoubleSpinBox" name="doubleSpinBox_y">
+                    <property name="suffix">
+                     <string> mm</string>
+                    </property>
                     <property name="minimum">
                      <double>-100.000000000000000</double>
                     </property>
@@ -405,7 +414,7 @@
                   <item>
                    <widget class="QLabel" name="label_z">
                     <property name="text">
-                     <string>z offset (mm)</string>
+                     <string>z offset</string>
                     </property>
                    </widget>
                   </item>
@@ -427,6 +436,9 @@
                   </item>
                   <item>
                    <widget class="QDoubleSpinBox" name="doubleSpinBox_z">
+                    <property name="suffix">
+                     <string> mm</string>
+                    </property>
                     <property name="minimum">
                      <double>-100.000000000000000</double>
                     </property>
@@ -458,7 +470,7 @@
                   <item>
                    <widget class="QLabel" name="label_tool">
                     <property name="text">
-                     <string>Tool length (mm)</string>
+                     <string>Tool length</string>
                     </property>
                    </widget>
                   </item>
@@ -480,6 +492,9 @@
                   </item>
                   <item>
                    <widget class="QDoubleSpinBox" name="doubleSpinBox_tool">
+                    <property name="suffix">
+                     <string> mm</string>
+                    </property>
                     <property name="maximum">
                      <double>200.000000000000000</double>
                     </property>
@@ -546,7 +561,7 @@
                   <item>
                    <widget class="QLabel" name="label_az">
                     <property name="text">
-                     <string>Yaw ( ° )</string>
+                     <string>Yaw</string>
                     </property>
                     <property name="alignment">
                      <set>Qt::AlignCenter</set>
@@ -592,6 +607,9 @@
                     </item>
                     <item>
                      <widget class="QDoubleSpinBox" name="doubleSpinBox_az">
+                      <property name="suffix">
+                       <string>°</string>
+                      </property>
                       <property name="minimum">
                        <double>-180.000000000000000</double>
                       </property>
@@ -638,7 +656,7 @@
                   <item>
                    <widget class="QLabel" name="label_el">
                     <property name="text">
-                     <string>Pitch ( ° )</string>
+                     <string>Pitch</string>
                     </property>
                     <property name="alignment">
                      <set>Qt::AlignCenter</set>
@@ -684,6 +702,9 @@
                     </item>
                     <item>
                      <widget class="QDoubleSpinBox" name="doubleSpinBox_el">
+                      <property name="suffix">
+                       <string>°</string>
+                      </property>
                       <property name="minimum">
                        <double>-40.000000000000000</double>
                       </property>
@@ -730,7 +751,7 @@
                   <item>
                    <widget class="QLabel" name="label_roll">
                     <property name="text">
-                     <string>Roll ( ° )</string>
+                     <string>Roll</string>
                     </property>
                     <property name="alignment">
                      <set>Qt::AlignCenter</set>
@@ -773,6 +794,9 @@
                     </item>
                     <item>
                      <widget class="QDoubleSpinBox" name="doubleSpinBox_roll">
+                      <property name="suffix">
+                       <string>°</string>
+                      </property>
                       <property name="minimum">
                        <double>-180.000000000000000</double>
                       </property>
