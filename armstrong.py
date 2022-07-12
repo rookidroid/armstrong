@@ -68,6 +68,10 @@ class MyApp(QtWidgets.QMainWindow):
             self.on_home_button_clicked
         )
 
+        self.ui.pushButton_minrange.clicked.connect(
+            self.on_minrange_button_clicked
+        )
+
         self.ui.pushButton_set.clicked.connect(
             self.on_set_button_clicked
         )
@@ -110,6 +114,13 @@ class MyApp(QtWidgets.QMainWindow):
         )
         self.ui.doubleSpinBox_z.valueChanged.connect(
             self.z_spinbox
+        )
+
+        self.ui.horizontalSlider_minrange.valueChanged.connect(
+            self.minrange_slider
+        )
+        self.ui.spinBox_minrange.valueChanged.connect(
+            self.minrange_spinbox
         )
 
         self.ui.horizontalSlider_tool.valueChanged.connect(
@@ -168,9 +179,9 @@ class MyApp(QtWidgets.QMainWindow):
         self.save_config()
 
         if idx == 0:
-            self.ui.label_az.setText('Yaw ( ° )')
-            self.ui.label_el.setText('Pitch ( ° )')
-            self.ui.label_roll.setText('Roll ( ° )')
+            self.ui.label_az.setText('Yaw')
+            self.ui.label_el.setText('Pitch')
+            self.ui.label_roll.setText('Roll')
 
             self.ui.dial_az.setMinimum(YAW_MIN)
             self.ui.dial_az.setMaximum(YAW_MAX)
@@ -187,9 +198,9 @@ class MyApp(QtWidgets.QMainWindow):
             self.ui.doubleSpinBox_roll.setMinimum(ROLL_MIN)
             self.ui.doubleSpinBox_roll.setMaximum(ROLL_MAX)
         elif idx == 1:
-            self.ui.label_az.setText('Horiz. θy ( ° )')
-            self.ui.label_el.setText('Vert. θz ( ° )')
-            self.ui.label_roll.setText('Roll offset ( ° )')
+            self.ui.label_az.setText('Horiz. θy')
+            self.ui.label_el.setText('Vert. θz')
+            self.ui.label_roll.setText('Roll offset')
 
             self.ui.dial_az.setMinimum(THETA_Y_MIN)
             self.ui.dial_az.setMaximum(THETA_Y_MAX)
@@ -206,9 +217,9 @@ class MyApp(QtWidgets.QMainWindow):
             self.ui.doubleSpinBox_roll.setMinimum(ROLL_MIN)
             self.ui.doubleSpinBox_roll.setMaximum(ROLL_MAX)
         elif idx == 2:
-            self.ui.label_az.setText('Horiz. θy ( ° )')
-            self.ui.label_el.setText('Vert. θz ( ° )')
-            self.ui.label_roll.setText('Roll offset ( ° )')
+            self.ui.label_az.setText('Horiz. θy')
+            self.ui.label_el.setText('Vert. θz')
+            self.ui.label_roll.setText('Roll offset')
 
             self.ui.dial_az.setMinimum(THETA_Y_MIN)
             self.ui.dial_az.setMaximum(THETA_Y_MAX)
@@ -225,9 +236,9 @@ class MyApp(QtWidgets.QMainWindow):
             self.ui.doubleSpinBox_roll.setMinimum(ROLL_MIN)
             self.ui.doubleSpinBox_roll.setMaximum(ROLL_MAX)
         elif idx == 3:
-            self.ui.label_az.setText('Horiz. θy ( ° )')
-            self.ui.label_el.setText('Vert. θz ( ° )')
-            self.ui.label_roll.setText('Roll offset ( ° )')
+            self.ui.label_az.setText('Horiz. θy')
+            self.ui.label_el.setText('Vert. θz')
+            self.ui.label_roll.setText('Roll offset')
 
             self.ui.dial_az.setMinimum(THETA_Y_MIN)
             self.ui.dial_az.setMaximum(THETA_Y_MAX)
@@ -244,9 +255,9 @@ class MyApp(QtWidgets.QMainWindow):
             self.ui.doubleSpinBox_roll.setMinimum(ROLL_MIN)
             self.ui.doubleSpinBox_roll.setMaximum(ROLL_MAX)
         elif idx == 4:
-            self.ui.label_az.setText('Azimuth ( ° )')
-            self.ui.label_el.setText('Elevation ( ° )')
-            self.ui.label_roll.setText('Roll offset ( ° )')
+            self.ui.label_az.setText('Azimuth')
+            self.ui.label_el.setText('Elevation')
+            self.ui.label_roll.setText('Roll offset')
 
             self.ui.dial_az.setMinimum(AZIMUTH_MIN)
             self.ui.dial_az.setMaximum(AZIMUTH_MAX)
@@ -263,9 +274,9 @@ class MyApp(QtWidgets.QMainWindow):
             self.ui.doubleSpinBox_roll.setMinimum(ROLL_MIN)
             self.ui.doubleSpinBox_roll.setMaximum(ROLL_MAX)
         elif idx == 5:
-            self.ui.label_az.setText('Azimuth ( ° )')
-            self.ui.label_el.setText('Elevation ( ° )')
-            self.ui.label_roll.setText('Roll offset ( ° )')
+            self.ui.label_az.setText('Azimuth')
+            self.ui.label_el.setText('Elevation')
+            self.ui.label_roll.setText('Roll offset')
 
             self.ui.dial_az.setMinimum(AZIMUTH_MIN)
             self.ui.dial_az.setMaximum(AZIMUTH_MAX)
@@ -282,9 +293,9 @@ class MyApp(QtWidgets.QMainWindow):
             self.ui.doubleSpinBox_roll.setMinimum(ROLL_MIN)
             self.ui.doubleSpinBox_roll.setMaximum(ROLL_MAX)
         elif idx == 6:
-            self.ui.label_az.setText('Azimuth ( ° )')
-            self.ui.label_el.setText('Elevation ( ° )')
-            self.ui.label_roll.setText('Roll offset ( ° )')
+            self.ui.label_az.setText('Azimuth')
+            self.ui.label_el.setText('Elevation')
+            self.ui.label_roll.setText('Roll offset')
 
             self.ui.dial_az.setMinimum(AZIMUTH_MIN)
             self.ui.dial_az.setMaximum(AZIMUTH_MAX)
@@ -446,6 +457,24 @@ class MyApp(QtWidgets.QMainWindow):
         self.ui.pushButton_set.setEnabled(True)
 
         # self.ui.lineEdit_cmd_port.setEnabled(False)
+
+    def on_minrange_button_clicked(self):
+        tsk_cmd = str(5.0)
+        azi = '0.0'
+        ele = str(self.ui.spinBox_minrange.value())
+        rol = '0.0'
+        x_offset = '0.0'
+        y_offset = '0.0'
+        z_offset = '0.0'
+        tool_offset = '0.0'
+
+        msg = tsk_cmd+','+azi+','+ele+','+rol+','+x_offset + \
+            ','+y_offset+','+z_offset+','+tool_offset+'\r\n'
+
+        self.display_message(msg)
+        self.cmd_socket.sendrecv(msg)
+        self.ui.pushButton_set.setEnabled(True)
+
     def on_set_button_clicked(self):
         self.ui.pushButton_set.setEnabled(False)
         tsk_cmd = str(3.0)
@@ -522,6 +551,12 @@ class MyApp(QtWidgets.QMainWindow):
     def z_spinbox(self, val):
         self.ui.horizontalSlider_z.setValue(val)
         self.ui.pushButton_set.setEnabled(True)
+
+    def minrange_slider(self, val):
+        self.ui.spinBox_minrange.setValue(val)
+
+    def minrange_spinbox(self, val):
+        self.ui.horizontalSlider_minrange.setValue(val)
 
     def tool_slider(self, val):
         self.ui.doubleSpinBox_tool.setValue(val)
