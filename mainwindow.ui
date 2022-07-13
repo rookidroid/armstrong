@@ -1034,7 +1034,7 @@
   </widget>
   <action name="actionVersion">
    <property name="text">
-    <string>Version 2.1</string>
+    <string>Version 2.2</string>
    </property>
   </action>
  </widget>
