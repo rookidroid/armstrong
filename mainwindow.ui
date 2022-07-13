@@ -587,7 +587,7 @@
                   <item>
                    <widget class="QSlider" name="horizontalSlider_minrange">
                     <property name="maximum">
-                     <number>100</number>
+                     <number>800</number>
                     </property>
                     <property name="orientation">
                      <enum>Qt::Horizontal</enum>
@@ -596,7 +596,7 @@
                      <enum>QSlider::TicksAbove</enum>
                     </property>
                     <property name="tickInterval">
-                     <number>5</number>
+                     <number>20</number>
                     </property>
                    </widget>
                   </item>
@@ -610,6 +610,9 @@
                     </property>
                     <property name="suffix">
                      <string> mm</string>
+                    </property>
+                    <property name="maximum">
+                     <number>800</number>
                     </property>
                    </widget>
                   </item>
