@@ -590,7 +590,7 @@
                      <number>800</number>
                     </property>
                     <property name="value">
-                     <number>100</number>
+                     <number>400</number>
                     </property>
                     <property name="orientation">
                      <enum>Qt::Horizontal</enum>
@@ -618,7 +618,7 @@
                      <number>800</number>
                     </property>
                     <property name="value">
-                     <number>100</number>
+                     <number>400</number>
                     </property>
                    </widget>
                   </item>
