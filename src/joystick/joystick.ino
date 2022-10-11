@@ -42,6 +42,12 @@
 #define PIN_X 34
 #define PIN_SW 4
 
+// GPIO pin number for the pot
+#define PIN_A 33
+#define PIN_B 32
+#define PIN_C 39
+#define PIN_D 36
+
 // PWM channels
 #define PWM_GREEN 0
 #define PWM_YELLOW 1
@@ -69,15 +75,31 @@ int valX = 0;
 int valY = 0;
 int valSw = 0;
 
+int valA = 0;
+int valB = 0;
+int valC = 0;
+int valD = 0;
+
 // old joystick values
 int valX_old = 0;
 int valY_old = 0;
 int valSw_old = 0;
 
+int valA_old = 0;
+int valB_old = 0;
+int valC_old = 0;
+int valD_old = 0;
+
 void setup()
 {
     adcAttachPin(PIN_Y);
     adcAttachPin(PIN_X);
+
+    adcAttachPin(PIN_A);
+    adcAttachPin(PIN_B);
+    adcAttachPin(PIN_C);
+    adcAttachPin(PIN_D);
+    
     analogSetClockDiv(64);
   
     // initilize hardware serial:
@@ -86,6 +108,11 @@ void setup()
     // configure joystick pin mode
     pinMode(PIN_Y, ANALOG);
     pinMode(PIN_X, ANALOG);
+
+    pinMode(PIN_A, ANALOG);
+    pinMode(PIN_B, ANALOG);
+    pinMode(PIN_C, ANALOG);
+    pinMode(PIN_D, ANALOG);
     pinMode(PIN_SW, INPUT_PULLUP);
 
     // configure LED PWM functionalitites
@@ -121,6 +148,11 @@ void loop()
     valY = analogRead(PIN_Y);
     valSw = digitalRead(PIN_SW);
 
+    valA = analogRead(PIN_A);
+    valB = analogRead(PIN_B);
+    valC = analogRead(PIN_C);
+    valD = analogRead(PIN_D);
+
     int temp_valX = floor(valX/32);
     int temp_valY = floor(valY/32);
 
@@ -139,6 +171,36 @@ void loop()
             // send joystick values to the UDP server
             udp.beginPacket(udpAddress, udpPort);
             udp.printf("X%d:Y%d:S%d:", valX, valY, valSw);
+//            udp.printf("X%d:Y%d:S%d:", temp_valX, temp_valY, valSw);
+            udp.endPacket();
+            ledcWrite(PWM_BLUE, 0);
+        }
+    }
+
+
+    int temp_valA = floor(valA/8);
+    int temp_valB = floor(valB/8);
+    int temp_valC = floor(valC/8);
+    int temp_valD = floor(valD/8);
+
+    int temp_valA_old = floor(valA_old/8);
+    int temp_valB_old = floor(valB_old/8);
+    int temp_valC_old = floor(valC_old/8);
+    int temp_valD_old = floor(valD_old/8);
+
+    if ((temp_valA != temp_valA_old) || (temp_valB != temp_valB_old) || (temp_valC != temp_valC_old) || (temp_valD != temp_valD_old))
+    {
+        valA_old = valA;
+        valB_old = valB;
+        valC_old = valC;
+        valD_old = valD;
+
+        if (connected)
+        {
+            ledcWrite(PWM_BLUE, 1);
+            // send joystick values to the UDP server
+            udp.beginPacket(udpAddress, udpPort);
+            udp.printf("A%d:B%d:C%d:D%d:", valA, valB, valC, valD);
 //            udp.printf("X%d:Y%d:S%d:", temp_valX, temp_valY, valSw);
             udp.endPacket();
             ledcWrite(PWM_BLUE, 0);
