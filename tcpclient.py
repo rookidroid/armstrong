@@ -1,5 +1,6 @@
 from PySide6.QtCore import QObject, Signal, Slot
 import socket
+import time
 
 
 class TCPClient(QObject):
@@ -21,7 +22,7 @@ class TCPClient(QObject):
         self.ip = ip
         self.port = port
         self.tcp_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.tcp_socket.settimeout(1)
+        self.tcp_socket.settimeout(10)
 
         self.signal = self.SIG_NORMAL
 
@@ -38,16 +39,17 @@ class TCPClient(QObject):
 
             while True:
                 if self.signal == self.SIG_NORMAL:
-                    try:
-                        data = self.tcp_socket.recv(4096)
-                    except socket.timeout as t_out:
-                        pass
-                    else:
-                        if data:
-                            self.message.emit(
-                                data.decode())
-                        else:
-                            break
+                    time.sleep(1)
+                    # try:
+                    #     data = self.tcp_socket.recv(4096)
+                    # except socket.timeout as t_out:
+                    #     pass
+                    # else:
+                    #     if data:
+                    #         self.message.emit(
+                    #             data.decode())
+                    #     else:
+                    #         break
                 elif self.signal == self.SIG_DISCONNECT:
                     self.signal = self.SIG_NORMAL
                     self.tcp_socket.close()
