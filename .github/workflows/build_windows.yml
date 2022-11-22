@@ -5,9 +5,9 @@ name: Windows Build
 
 on:
   push:
-    branches: [ main ]
+    branches: [ dual ]
   pull_request:
-    branches: [ main ]
+    branches: [ dual ]
 
 jobs:
   build:
@@ -26,11 +26,11 @@ jobs:
         pip install PySide6 psutil pyinstaller
     - name: PyInstaller
       run: |
-        pyinstaller armstrong.spec
-        copy mainwindow.ui .\dist\armstrong\
+        pyinstaller dual-bot.spec
+        copy mainwindow.ui .\dist\dual-bot\
     - name: Archive built module
       uses: actions/upload-artifact@v3
       if: success()
       with:
-        name: armstrong_windows
-        path: .\dist\armstrong
+        name: dual-bot_windows
+        path: .\dist\dual-bot

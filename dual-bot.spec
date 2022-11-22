@@ -3,8 +3,8 @@
 block_cipher = None
 
 
-a = Analysis(['armstrong.py'],
-             pathex=['./armstrong'],
+a = Analysis(['dual-bot.py'],
+             pathex=['./dual-bot'],
              binaries=[],
              datas=[('./res', 'res')],
              hiddenimports=[],
@@ -21,13 +21,13 @@ exe = EXE(pyz,
           a.scripts,
           [],
           exclude_binaries=True,
-          name='armstrong',
+          name='dual-bot',
           debug=False,
           bootloader_ignore_signals=False,
           strip=False,
           upx=True,
           console=False,
-          icon='res/armstrong.ico' )
+          icon='res/dual-bot.ico' )
 coll = COLLECT(exe,
                a.binaries,
                a.zipfiles,
@@ -35,4 +35,4 @@ coll = COLLECT(exe,
                strip=False,
                upx=True,
                upx_exclude=[],
-               name='armstrong')
+               name='dual-bot')
