@@ -201,7 +201,7 @@ class MyApp(QtWidgets.QMainWindow):
                 self.config['SPEED_RIGHT'] = self.ui.doubleSpinBox_speed_r.value()
                 self.save_config()
 
-                self.ui.groupBox_r.setEnabled(True)
+                # self.ui.groupBox_r.setEnabled(True)
 
                 msg = '6.0\r\n'
                 self.display_message_right(msg)
@@ -212,7 +212,7 @@ class MyApp(QtWidgets.QMainWindow):
 
     def on_tcp_client_message_ready_right(self, msg):
         msg_list = msg.split()
-        if msg_list[0] == '+6':
+        if msg_list[0] == '+6' or msg_list[0] == '+2':
             print('query')
             az = float(msg_list[1])
             el = float(msg_list[2])
@@ -220,6 +220,8 @@ class MyApp(QtWidgets.QMainWindow):
             self.ui.doubleSpinBox_az_r.setValue(az)
             self.ui.doubleSpinBox_el_rl.setValue(el)
             self.ui.doubleSpinBox_pol_r.setValue(pol)
+
+            self.ui.groupBox_r.setEnabled(True)
 
         self.ui.textBrowser_r.append(
             '<p style="text-align: center;">' +
@@ -334,11 +336,13 @@ class MyApp(QtWidgets.QMainWindow):
         self.ui.pushButton_set_r.setEnabled(True)
 
     def on_home_button_clicked_right(self):
+        self.ui.groupBox_r.setEnabled(False)
         msg = '1.0\r\n'
         self.display_message_right(msg)
         self.cmd_socket_r.sendrecv(msg)
 
     def on_set_button_clicked_right(self):
+        self.ui.groupBox_r.setEnabled(False)
         self.ui.pushButton_set_r.setEnabled(False)
         msg = '2.0 ' +\
             str(self.ui.doubleSpinBox_az_r.value())+' ' +\
