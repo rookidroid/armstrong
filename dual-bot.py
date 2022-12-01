@@ -20,6 +20,8 @@ class MyApp(QtWidgets.QMainWindow):
     def __init__(self):
         super(MyApp, self).__init__()
 
+        self.version = 'v1.0'
+
         config_file = Path('config.json')
         if config_file.exists():
             self.config = json.load(open('config.json', 'r'))
@@ -79,6 +81,8 @@ class MyApp(QtWidgets.QMainWindow):
     def init_ui(self):
         self.ui.groupBox_r.setEnabled(False)
         self.ui.groupBox_l.setEnabled(False)
+
+        self.ui.statusbar.showMessage(self.version)
 
         # TCP Client
         self.config['IP_RIGHT'] = self.config.get('IP_RIGHT', '192.168.0.32')
