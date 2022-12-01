@@ -178,8 +178,10 @@ class MyApp(QtWidgets.QMainWindow):
 
         elif status == TCPClient.CONNECTED:
             self.config['IP_RIGHT'] = self.ui.lineEdit_ip_r.text()
-            self.config['CTRL_PORT_RIGHT'] = self.ui.doubleSpinBox_ctrl_r.value()
-            self.config['CMD_PORT_RIGHT'] = self.ui.doubleSpinBox_cmd_r.value()
+            self.config['CTRL_PORT_RIGHT'] = \
+                self.ui.doubleSpinBox_ctrl_r.value()
+            self.config['CMD_PORT_RIGHT'] = \
+                self.ui.doubleSpinBox_cmd_r.value()
             self.save_config()
 
             success = 0
@@ -196,9 +198,9 @@ class MyApp(QtWidgets.QMainWindow):
             self.display_message_right('1;1;RUN')
             success += self.ctrl_socket_r.sendrecv('1;1;RUN')
 
-            # success = 0
             if success == 0:
-                self.config['SPEED_RIGHT'] = self.ui.doubleSpinBox_speed_r.value()
+                self.config['SPEED_RIGHT'] = \
+                    self.ui.doubleSpinBox_speed_r.value()
                 self.save_config()
 
                 # self.ui.groupBox_r.setEnabled(True)
@@ -222,6 +224,7 @@ class MyApp(QtWidgets.QMainWindow):
             self.ui.doubleSpinBox_pol_r.setValue(pol)
 
             self.ui.groupBox_r.setEnabled(True)
+            self.ui.groupBox_rightbot.setEnabled(True)
 
         self.ui.textBrowser_r.append(
             '<p style="text-align: center;">' +
@@ -336,13 +339,13 @@ class MyApp(QtWidgets.QMainWindow):
         self.ui.pushButton_set_r.setEnabled(True)
 
     def on_home_button_clicked_right(self):
-        self.ui.groupBox_r.setEnabled(False)
+        self.ui.groupBox_rightbot.setEnabled(False)
         msg = '1.0\r\n'
         self.display_message_right(msg)
-        self.cmd_socket_r.sendrecv(msg)
+        self.cmd_socket_r.send(msg)
 
     def on_set_button_clicked_right(self):
-        self.ui.groupBox_r.setEnabled(False)
+        self.ui.groupBox_rightbot.setEnabled(False)
         self.ui.pushButton_set_r.setEnabled(False)
         msg = '2.0 ' +\
             str(self.ui.doubleSpinBox_az_r.value())+' ' +\
@@ -350,7 +353,7 @@ class MyApp(QtWidgets.QMainWindow):
             str(self.ui.doubleSpinBox_pol_r.value())+' ' +\
             str(self.ui.doubleSpinBox_speed_r.value())+'\r\n'
         self.display_message_right(msg)
-        self.cmd_socket_r.sendrecv(msg)
+        self.cmd_socket_r.send(msg)
 
     def display_message_right(self, msg):
         self.ui.textBrowser_r.append(

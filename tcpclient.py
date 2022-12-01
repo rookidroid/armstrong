@@ -15,6 +15,7 @@ class TCPClient(QObject):
     SIG_NORMAL = 0
     SIG_STOP = 1
     SIG_DISCONNECT = 2
+    SIG_RECEIVING = 3
 
     def __init__(self, ip, port):
         QObject.__init__(self)
@@ -22,9 +23,11 @@ class TCPClient(QObject):
         self.ip = ip
         self.port = port
         self.tcp_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.tcp_socket.settimeout(10)
+        self.tcp_socket.settimeout(60)
 
         self.signal = self.SIG_NORMAL
+
+        self.received = False
 
     @Slot()
     def start(self):
@@ -39,17 +42,22 @@ class TCPClient(QObject):
 
             while True:
                 if self.signal == self.SIG_NORMAL:
-                    time.sleep(1)
-                    # try:
-                    #     data = self.tcp_socket.recv(4096)
-                    # except socket.timeout as t_out:
-                    #     pass
-                    # else:
-                    #     if data:
-                    #         self.message.emit(
-                    #             data.decode())
-                    #     else:
-                    #         break
+                    time.sleep(0.1)
+                elif self.signal == self.SIG_RECEIVING:
+                    # time.sleep(1)
+                    try:
+                        data = self.tcp_socket.recv(4096)
+                    except socket.timeout as t_out:
+                        self.signal = self.SIG_NORMAL
+                        pass
+                    else:
+                        if data:
+                            self.message.emit(
+                                data.decode())
+                            self.received = True
+                            self.signal = self.SIG_NORMAL
+                        else:
+                            break
                 elif self.signal == self.SIG_DISCONNECT:
                     self.signal = self.SIG_NORMAL
                     self.tcp_socket.close()
@@ -59,21 +67,18 @@ class TCPClient(QObject):
             self.status.emit(self.STOP, '')
 
     def send(self, msg):
+        self.signal = self.SIG_RECEIVING
         self.tcp_socket.sendall(msg.encode())
 
     def sendrecv(self, msg):
+        self.received = False
+        self.signal = self.SIG_RECEIVING
         self.tcp_socket.sendall(msg.encode())
-        try:
-            data = self.tcp_socket.recv(4096)
-        except socket.timeout as t_out:
-            return -1
-        else:
-            if data:
-                self.message.emit(
-                    data.decode())
+        for idx in range(0, 600):
+            if self.received:
                 return 0
-            else:
-                return -1
+            time.sleep(0.1)
+        return 1
 
     def close(self):
         self.signal = self.SIG_DISCONNECT
