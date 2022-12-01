@@ -263,7 +263,7 @@
             <item>
              <layout class="QHBoxLayout" name="horizontalLayout_6">
               <item>
-               <widget class="QSlider" name="horizontalSlider">
+               <widget class="QSlider" name="horizontalSlider_az_l">
                 <property name="maximum">
                  <number>280</number>
                 </property>
@@ -295,7 +295,7 @@
             <item>
              <layout class="QHBoxLayout" name="horizontalLayout_5">
               <item>
-               <widget class="QSlider" name="verticalSlider_3">
+               <widget class="QSlider" name="verticalSlider_el_ll">
                 <property name="minimum">
                  <number>-40</number>
                 </property>
@@ -346,7 +346,7 @@
                    <enum>QAbstractSpinBox::UpDownArrows</enum>
                   </property>
                   <property name="prefix">
-                   <string>EL: </string>
+                   <string>El: </string>
                   </property>
                   <property name="suffix">
                    <string>°</string>
@@ -590,7 +590,7 @@
                </layout>
               </item>
               <item>
-               <widget class="QSlider" name="verticalSlider">
+               <widget class="QSlider" name="verticalSlider_el_lr">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Fixed" vsizetype="Expanding">
                   <horstretch>0</horstretch>
@@ -1460,9 +1460,9 @@
    </hints>
   </connection>
   <connection>
-   <sender>verticalSlider_3</sender>
+   <sender>verticalSlider_el_ll</sender>
    <signal>valueChanged(int)</signal>
-   <receiver>verticalSlider</receiver>
+   <receiver>verticalSlider_el_lr</receiver>
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
@@ -1476,9 +1476,9 @@
    </hints>
   </connection>
   <connection>
-   <sender>verticalSlider</sender>
+   <sender>verticalSlider_el_lr</sender>
    <signal>valueChanged(int)</signal>
-   <receiver>verticalSlider_3</receiver>
+   <receiver>verticalSlider_el_ll</receiver>
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel">
