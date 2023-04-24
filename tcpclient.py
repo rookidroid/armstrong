@@ -4,18 +4,19 @@ import time
 
 
 class TCPClient(QObject):
-    status = Signal(int, object)
-    message = Signal(object)
+    sig_status = Signal(int, object)
+    sig_message = Signal(object)
+    sig_error = Signal(object)
     ERROR = -1
     LISTEN = 1
     CONNECTED = 2
     TIMEOUT = 3
     STOP = 3
 
-    SIG_NORMAL = 0
-    SIG_STOP = 1
-    SIG_DISCONNECT = 2
-    SIG_RECEIVING = 3
+    STATE_IDLE = 0
+    STATE_STOP = 1
+    STATE_DISCONNECT = 2
+    STATE_RECEIVING = 3
 
     def __init__(self, ip, port):
         QObject.__init__(self)
@@ -25,7 +26,7 @@ class TCPClient(QObject):
         self.tcp_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.tcp_socket.settimeout(60)
 
-        self.signal = self.SIG_NORMAL
+        self.state = self.STATE_RECEIVING
 
         self.received = False
 
@@ -34,45 +35,48 @@ class TCPClient(QObject):
         try:
             self.tcp_socket.connect((self.ip, self.port))
         except OSError as err:
-            print(err)
-            # self.status.emit(self.STOP, '')
+            # print(err)
+            self.sig_error.emit('Unable to establish a connection with ' +
+                                self.ip+':'+str(self.port) + '. ' +
+                                str(err))
+            # self.sig_status.emit(self.STOP, '')
         else:
             # print('connected')
-            self.status.emit(self.CONNECTED, self.ip)
+            self.sig_status.emit(self.CONNECTED, self.ip)
 
             while True:
-                if self.signal == self.SIG_NORMAL:
+                if self.state == self.STATE_IDLE:
                     time.sleep(0.1)
-                elif self.signal == self.SIG_RECEIVING:
+                elif self.state == self.STATE_RECEIVING:
                     # time.sleep(1)
                     try:
                         data = self.tcp_socket.recv(4096)
                     except socket.timeout as t_out:
-                        self.signal = self.SIG_NORMAL
+                        self.state = self.STATE_IDLE
                         pass
                     else:
                         if data:
-                            self.message.emit(
+                            self.sig_message.emit(
                                 data.decode())
                             self.received = True
-                            self.signal = self.SIG_NORMAL
+                            # self.state = self.STATE_IDLE
                         else:
                             break
-                elif self.signal == self.SIG_DISCONNECT:
-                    self.signal = self.SIG_NORMAL
+                elif self.state == self.STATE_DISCONNECT:
+                    self.state = self.STATE_IDLE
                     self.tcp_socket.close()
-                    # self.status.emit(self.STOP, '')
+                    # self.sig_status.emit(self.STOP, '')
                     break
         finally:
-            self.status.emit(self.STOP, '')
+            self.sig_status.emit(self.STOP, '')
 
     def send(self, msg):
-        self.signal = self.SIG_RECEIVING
+        # self.state = self.STATE_RECEIVING
         self.tcp_socket.sendall(msg.encode())
 
-    def sendrecv(self, msg):
+    def send_wait(self, msg):
         self.received = False
-        self.signal = self.SIG_RECEIVING
+        # self.state = self.STATE_RECEIVING
         self.tcp_socket.sendall(msg.encode())
         for idx in range(0, 600):
             if self.received:
@@ -81,4 +85,6 @@ class TCPClient(QObject):
         return 1
 
     def close(self):
-        self.signal = self.SIG_DISCONNECT
+        self.state = self.STATE_DISCONNECT
+        self.sig_status.emit(self.STOP, '')
+        self.tcp_socket.close()

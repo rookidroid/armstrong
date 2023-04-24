@@ -1,1 +1,1 @@
-# Dual-bot
+# DuoBot

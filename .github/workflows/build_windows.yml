@@ -26,11 +26,11 @@ jobs:
         pip install PySide6 psutil pyinstaller
     - name: PyInstaller
       run: |
-        pyinstaller dual-bot.spec
-        copy mainwindow.ui .\dist\dual-bot\
+        pyinstaller duobot.spec
+        copy mainwindow.ui .\dist\duobot\
     - name: Archive built module
       uses: actions/upload-artifact@v3
       if: success()
       with:
-        name: dual-bot_windows
-        path: .\dist\dual-bot
+        name: duobot_windows
+        path: .\dist\duobot

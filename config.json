@@ -1,0 +1,11 @@
+{
+    "IP_RIGHT": "192.168.0.32",
+    "CTRL_PORT_RIGHT": 10002.0,
+    "CMD_PORT_RIGHT": 10003.0,
+    "SPEED_RIGHT": 25.0,
+    "IP_LEFT": "192.168.0.33",
+    "CTRL_PORT_LEFT": 10002.0,
+    "CMD_PORT_LEFT": 10003.0,
+    "SPEED_LEFT": 25.0,
+    "DEVMODE": false
+}

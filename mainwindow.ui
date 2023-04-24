@@ -6,16 +6,16 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1125</width>
-    <height>583</height>
+    <width>877</width>
+    <height>513</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Dual-Bot</string>
+   <string>DuoBot</string>
   </property>
   <property name="windowIcon">
    <iconset>
-    <normaloff>res/dual-bot.png</normaloff>res/dual-bot.png</iconset>
+    <normaloff>res/duobot.png</normaloff>res/duobot.png</iconset>
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QHBoxLayout" name="horizontalLayout">
@@ -113,7 +113,7 @@
            <item>
             <widget class="QPushButton" name="pushButton_connect_l">
              <property name="text">
-              <string>Connect and Initialize</string>
+              <string>START</string>
              </property>
             </widget>
            </item>
@@ -128,8 +128,14 @@
             <string/>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_5">
+            <property name="spacing">
+             <number>0</number>
+            </property>
             <item>
              <layout class="QHBoxLayout" name="horizontalLayout_9">
+              <property name="bottomMargin">
+               <number>6</number>
+              </property>
               <item>
                <spacer name="horizontalSpacer_7">
                 <property name="orientation">
@@ -185,6 +191,13 @@
             <item>
              <layout class="QHBoxLayout" name="horizontalLayout_18">
               <item>
+               <widget class="QLabel" name="label_13">
+                <property name="text">
+                 <string>+28°</string>
+                </property>
+               </widget>
+              </item>
+              <item>
                <spacer name="horizontalSpacer_12">
                 <property name="orientation">
                  <enum>Qt::Horizontal</enum>
@@ -196,19 +209,6 @@
                  </size>
                 </property>
                </spacer>
-              </item>
-              <item>
-               <widget class="QLabel" name="label_3">
-                <property name="font">
-                 <font>
-                  <pointsize>12</pointsize>
-                  <bold>true</bold>
-                 </font>
-                </property>
-                <property name="text">
-                 <string>+</string>
-                </property>
-               </widget>
               </item>
               <item>
                <widget class="QDoubleSpinBox" name="doubleSpinBox_az_l">
@@ -233,19 +233,6 @@
                </widget>
               </item>
               <item>
-               <widget class="QLabel" name="label_4">
-                <property name="font">
-                 <font>
-                  <pointsize>12</pointsize>
-                  <bold>true</bold>
-                 </font>
-                </property>
-                <property name="text">
-                 <string>-</string>
-                </property>
-               </widget>
-              </item>
-              <item>
                <spacer name="horizontalSpacer_17">
                 <property name="orientation">
                  <enum>Qt::Horizontal</enum>
@@ -258,87 +245,148 @@
                 </property>
                </spacer>
               </item>
-             </layout>
-            </item>
-            <item>
-             <layout class="QHBoxLayout" name="horizontalLayout_6">
               <item>
-               <widget class="QSlider" name="horizontalSlider_az_l">
-                <property name="maximum">
-                 <number>280</number>
-                </property>
-                <property name="singleStep">
-                 <number>1</number>
-                </property>
-                <property name="pageStep">
-                 <number>50</number>
-                </property>
-                <property name="orientation">
-                 <enum>Qt::Horizontal</enum>
-                </property>
-                <property name="invertedAppearance">
-                 <bool>true</bool>
-                </property>
-                <property name="invertedControls">
-                 <bool>false</bool>
-                </property>
-                <property name="tickPosition">
-                 <enum>QSlider::TicksAbove</enum>
-                </property>
-                <property name="tickInterval">
-                 <number>50</number>
+               <widget class="QLabel" name="label_14">
+                <property name="text">
+                 <string>0°</string>
                 </property>
                </widget>
               </item>
              </layout>
             </item>
             <item>
+             <widget class="QGroupBox" name="groupBox">
+              <property name="title">
+               <string/>
+              </property>
+              <layout class="QHBoxLayout" name="horizontalLayout_3">
+               <property name="spacing">
+                <number>0</number>
+               </property>
+               <property name="leftMargin">
+                <number>2</number>
+               </property>
+               <property name="topMargin">
+                <number>2</number>
+               </property>
+               <property name="rightMargin">
+                <number>2</number>
+               </property>
+               <property name="bottomMargin">
+                <number>2</number>
+               </property>
+               <item>
+                <widget class="QSlider" name="horizontalSlider_az_l">
+                 <property name="maximum">
+                  <number>280</number>
+                 </property>
+                 <property name="singleStep">
+                  <number>1</number>
+                 </property>
+                 <property name="pageStep">
+                  <number>50</number>
+                 </property>
+                 <property name="orientation">
+                  <enum>Qt::Horizontal</enum>
+                 </property>
+                 <property name="invertedAppearance">
+                  <bool>true</bool>
+                 </property>
+                 <property name="invertedControls">
+                  <bool>false</bool>
+                 </property>
+                 <property name="tickPosition">
+                  <enum>QSlider::TicksAbove</enum>
+                 </property>
+                 <property name="tickInterval">
+                  <number>50</number>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </widget>
+            </item>
+            <item>
+             <layout class="QHBoxLayout" name="horizontalLayout_6"/>
+            </item>
+            <item>
              <layout class="QHBoxLayout" name="horizontalLayout_5">
               <item>
-               <widget class="QSlider" name="verticalSlider_el_ll">
-                <property name="minimum">
-                 <number>-40</number>
+               <widget class="QGroupBox" name="groupBox_2">
+                <property name="title">
+                 <string/>
                 </property>
-                <property name="maximum">
-                 <number>50</number>
-                </property>
-                <property name="singleStep">
-                 <number>1</number>
-                </property>
-                <property name="pageStep">
-                 <number>50</number>
-                </property>
-                <property name="value">
-                 <number>-40</number>
-                </property>
-                <property name="orientation">
-                 <enum>Qt::Vertical</enum>
-                </property>
-                <property name="invertedAppearance">
-                 <bool>true</bool>
-                </property>
-                <property name="tickPosition">
-                 <enum>QSlider::TicksBelow</enum>
-                </property>
-                <property name="tickInterval">
-                 <number>50</number>
-                </property>
+                <layout class="QHBoxLayout" name="horizontalLayout_11">
+                 <property name="spacing">
+                  <number>0</number>
+                 </property>
+                 <property name="leftMargin">
+                  <number>2</number>
+                 </property>
+                 <property name="topMargin">
+                  <number>2</number>
+                 </property>
+                 <property name="rightMargin">
+                  <number>2</number>
+                 </property>
+                 <property name="bottomMargin">
+                  <number>2</number>
+                 </property>
+                 <item>
+                  <widget class="QSlider" name="verticalSlider_el_ll">
+                   <property name="minimum">
+                    <number>-40</number>
+                   </property>
+                   <property name="maximum">
+                    <number>50</number>
+                   </property>
+                   <property name="singleStep">
+                    <number>1</number>
+                   </property>
+                   <property name="pageStep">
+                    <number>50</number>
+                   </property>
+                   <property name="value">
+                    <number>-40</number>
+                   </property>
+                   <property name="orientation">
+                    <enum>Qt::Vertical</enum>
+                   </property>
+                   <property name="invertedAppearance">
+                    <bool>true</bool>
+                   </property>
+                   <property name="tickPosition">
+                    <enum>QSlider::TicksBelow</enum>
+                   </property>
+                   <property name="tickInterval">
+                    <number>50</number>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
                </widget>
               </item>
               <item>
                <layout class="QVBoxLayout" name="verticalLayout_11">
                 <item>
-                 <widget class="QLabel" name="label_5">
-                  <property name="font">
-                   <font>
-                    <pointsize>12</pointsize>
-                    <bold>true</bold>
-                   </font>
-                  </property>
+                 <widget class="QLabel" name="label_15">
                   <property name="text">
-                   <string>-</string>
+                   <string>-4°</string>
                   </property>
                  </widget>
+                </item>
+                <item>
+                 <spacer name="verticalSpacer_9">
+                  <property name="orientation">
+                   <enum>Qt::Vertical</enum>
+                  </property>
+                  <property name="sizeHint" stdset="0">
+                   <size>
+                    <width>20</width>
+                    <height>0</height>
+                   </size>
+                  </property>
+                 </spacer>
                 </item>
                 <item>
                  <widget class="QDoubleSpinBox" name="doubleSpinBox_el_ll">
@@ -369,15 +417,22 @@
                  </widget>
                 </item>
                 <item>
-                 <widget class="QLabel" name="label_6">
-                  <property name="font">
-                   <font>
-                    <pointsize>12</pointsize>
-                    <bold>true</bold>
-                   </font>
+                 <spacer name="verticalSpacer_10">
+                  <property name="orientation">
+                   <enum>Qt::Vertical</enum>
                   </property>
+                  <property name="sizeHint" stdset="0">
+                   <size>
+                    <width>20</width>
+                    <height>0</height>
+                   </size>
+                  </property>
+                 </spacer>
+                </item>
+                <item>
+                 <widget class="QLabel" name="label_ell1">
                   <property name="text">
-                   <string>+</string>
+                   <string>+5°</string>
                   </property>
                  </widget>
                 </item>
@@ -398,6 +453,9 @@
               </item>
               <item>
                <layout class="QVBoxLayout" name="verticalLayout_6">
+                <property name="spacing">
+                 <number>0</number>
+                </property>
                 <item>
                  <spacer name="verticalSpacer_3">
                   <property name="orientation">
@@ -414,7 +472,7 @@
                 <item>
                  <widget class="QGroupBox" name="groupBox_4">
                   <property name="title">
-                   <string>Polarization</string>
+                   <string/>
                   </property>
                   <property name="alignment">
                    <set>Qt::AlignCenter</set>
@@ -422,6 +480,12 @@
                   <layout class="QVBoxLayout" name="verticalLayout_7">
                    <item>
                     <widget class="QDial" name="dial_pol_l">
+                     <property name="minimumSize">
+                      <size>
+                       <width>80</width>
+                       <height>80</height>
+                      </size>
+                     </property>
                      <property name="minimum">
                       <number>-90</number>
                      </property>
@@ -460,7 +524,7 @@
                      <item>
                       <widget class="QDoubleSpinBox" name="doubleSpinBox_pol_l">
                        <property name="prefix">
-                        <string/>
+                        <string>Polar: </string>
                        </property>
                        <property name="suffix">
                         <string>°</string>
@@ -528,20 +592,27 @@
               <item>
                <layout class="QVBoxLayout" name="verticalLayout_12">
                 <item>
-                 <widget class="QLabel" name="label_7">
-                  <property name="font">
-                   <font>
-                    <pointsize>12</pointsize>
-                    <bold>true</bold>
-                   </font>
-                  </property>
+                 <widget class="QLabel" name="label">
                   <property name="text">
-                   <string>-</string>
+                   <string>-4°</string>
                   </property>
                   <property name="alignment">
                    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
                   </property>
                  </widget>
+                </item>
+                <item>
+                 <spacer name="verticalSpacer_11">
+                  <property name="orientation">
+                   <enum>Qt::Vertical</enum>
+                  </property>
+                  <property name="sizeHint" stdset="0">
+                   <size>
+                    <width>20</width>
+                    <height>0</height>
+                   </size>
+                  </property>
+                 </spacer>
                 </item>
                 <item>
                  <widget class="QDoubleSpinBox" name="doubleSpinBox_el_lr">
@@ -572,15 +643,22 @@
                  </widget>
                 </item>
                 <item>
-                 <widget class="QLabel" name="label_8">
-                  <property name="font">
-                   <font>
-                    <pointsize>12</pointsize>
-                    <bold>true</bold>
-                   </font>
+                 <spacer name="verticalSpacer_12">
+                  <property name="orientation">
+                   <enum>Qt::Vertical</enum>
                   </property>
+                  <property name="sizeHint" stdset="0">
+                   <size>
+                    <width>20</width>
+                    <height>0</height>
+                   </size>
+                  </property>
+                 </spacer>
+                </item>
+                <item>
+                 <widget class="QLabel" name="label_ell2">
                   <property name="text">
-                   <string>+</string>
+                   <string>+5°</string>
                   </property>
                   <property name="alignment">
                    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -590,40 +668,64 @@
                </layout>
               </item>
               <item>
-               <widget class="QSlider" name="verticalSlider_el_lr">
-                <property name="sizePolicy">
-                 <sizepolicy hsizetype="Fixed" vsizetype="Expanding">
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
+               <widget class="QGroupBox" name="groupBox_3">
+                <property name="title">
+                 <string/>
                 </property>
-                <property name="minimum">
-                 <number>-40</number>
-                </property>
-                <property name="maximum">
-                 <number>50</number>
-                </property>
-                <property name="singleStep">
-                 <number>1</number>
-                </property>
-                <property name="pageStep">
-                 <number>50</number>
-                </property>
-                <property name="value">
-                 <number>-40</number>
-                </property>
-                <property name="orientation">
-                 <enum>Qt::Vertical</enum>
-                </property>
-                <property name="invertedAppearance">
-                 <bool>true</bool>
-                </property>
-                <property name="tickPosition">
-                 <enum>QSlider::TicksAbove</enum>
-                </property>
-                <property name="tickInterval">
-                 <number>50</number>
-                </property>
+                <layout class="QHBoxLayout" name="horizontalLayout_17">
+                 <property name="spacing">
+                  <number>0</number>
+                 </property>
+                 <property name="leftMargin">
+                  <number>2</number>
+                 </property>
+                 <property name="topMargin">
+                  <number>2</number>
+                 </property>
+                 <property name="rightMargin">
+                  <number>2</number>
+                 </property>
+                 <property name="bottomMargin">
+                  <number>2</number>
+                 </property>
+                 <item>
+                  <widget class="QSlider" name="verticalSlider_el_lr">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Fixed" vsizetype="Expanding">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
+                   <property name="minimum">
+                    <number>-40</number>
+                   </property>
+                   <property name="maximum">
+                    <number>50</number>
+                   </property>
+                   <property name="singleStep">
+                    <number>1</number>
+                   </property>
+                   <property name="pageStep">
+                    <number>50</number>
+                   </property>
+                   <property name="value">
+                    <number>-40</number>
+                   </property>
+                   <property name="orientation">
+                    <enum>Qt::Vertical</enum>
+                   </property>
+                   <property name="invertedAppearance">
+                    <bool>true</bool>
+                   </property>
+                   <property name="tickPosition">
+                    <enum>QSlider::TicksAbove</enum>
+                   </property>
+                   <property name="tickInterval">
+                    <number>50</number>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
                </widget>
               </item>
              </layout>
@@ -634,6 +736,19 @@
                <enum>Qt::Horizontal</enum>
               </property>
              </widget>
+            </item>
+            <item>
+             <spacer name="verticalSpacer_7">
+              <property name="orientation">
+               <enum>Qt::Vertical</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>20</width>
+                <height>6</height>
+               </size>
+              </property>
+             </spacer>
             </item>
             <item>
              <widget class="QPushButton" name="pushButton_set_l">
@@ -664,20 +779,61 @@
      </layout>
     </item>
     <item>
-     <spacer name="horizontalSpacer_3">
-      <property name="orientation">
-       <enum>Qt::Horizontal</enum>
-      </property>
-      <property name="sizeType">
-       <enum>QSizePolicy::Fixed</enum>
-      </property>
-      <property name="sizeHint" stdset="0">
-       <size>
-        <width>40</width>
-        <height>20</height>
-       </size>
-      </property>
-     </spacer>
+     <layout class="QVBoxLayout" name="verticalLayout_15">
+      <item>
+       <spacer name="verticalSpacer_6">
+        <property name="orientation">
+         <enum>Qt::Vertical</enum>
+        </property>
+        <property name="sizeType">
+         <enum>QSizePolicy::Fixed</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>20</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item>
+       <widget class="QPushButton" name="pushButton_start">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="minimumSize">
+         <size>
+          <width>0</width>
+          <height>60</height>
+         </size>
+        </property>
+        <property name="font">
+         <font>
+          <bold>true</bold>
+         </font>
+        </property>
+        <property name="text">
+         <string>START</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <spacer name="verticalSpacer_5">
+        <property name="orientation">
+         <enum>Qt::Vertical</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>20</width>
+          <height>40</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+     </layout>
     </item>
     <item>
      <layout class="QVBoxLayout" name="verticalLayout">
@@ -779,7 +935,7 @@
            <item>
             <widget class="QPushButton" name="pushButton_connect_r">
              <property name="text">
-              <string>Connect and Initialize</string>
+              <string>START</string>
              </property>
             </widget>
            </item>
@@ -806,8 +962,14 @@
             <string/>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_8">
+            <property name="spacing">
+             <number>0</number>
+            </property>
             <item>
              <layout class="QHBoxLayout" name="horizontalLayout_13">
+              <property name="bottomMargin">
+               <number>6</number>
+              </property>
               <item>
                <spacer name="horizontalSpacer_10">
                 <property name="orientation">
@@ -863,6 +1025,13 @@
             <item>
              <layout class="QHBoxLayout" name="horizontalLayout_7">
               <item>
+               <widget class="QLabel" name="label_17">
+                <property name="text">
+                 <string>0°</string>
+                </property>
+               </widget>
+              </item>
+              <item>
                <spacer name="horizontalSpacer_4">
                 <property name="orientation">
                  <enum>Qt::Horizontal</enum>
@@ -874,19 +1043,6 @@
                  </size>
                 </property>
                </spacer>
-              </item>
-              <item>
-               <widget class="QLabel" name="label_2">
-                <property name="font">
-                 <font>
-                  <pointsize>12</pointsize>
-                  <bold>true</bold>
-                 </font>
-                </property>
-                <property name="text">
-                 <string>+</string>
-                </property>
-               </widget>
               </item>
               <item>
                <widget class="QDoubleSpinBox" name="doubleSpinBox_az_r">
@@ -914,19 +1070,6 @@
                </widget>
               </item>
               <item>
-               <widget class="QLabel" name="label">
-                <property name="font">
-                 <font>
-                  <pointsize>12</pointsize>
-                  <bold>true</bold>
-                 </font>
-                </property>
-                <property name="text">
-                 <string>-</string>
-                </property>
-               </widget>
-              </item>
-              <item>
                <spacer name="horizontalSpacer_16">
                 <property name="orientation">
                  <enum>Qt::Horizontal</enum>
@@ -939,90 +1082,148 @@
                 </property>
                </spacer>
               </item>
-             </layout>
-            </item>
-            <item>
-             <layout class="QHBoxLayout" name="horizontalLayout_14">
               <item>
-               <widget class="QSlider" name="horizontalSlider_az_r">
-                <property name="minimum">
-                 <number>-280</number>
-                </property>
-                <property name="maximum">
-                 <number>0</number>
-                </property>
-                <property name="singleStep">
-                 <number>1</number>
-                </property>
-                <property name="pageStep">
-                 <number>50</number>
-                </property>
-                <property name="sliderPosition">
-                 <number>0</number>
-                </property>
-                <property name="orientation">
-                 <enum>Qt::Horizontal</enum>
-                </property>
-                <property name="invertedAppearance">
-                 <bool>true</bool>
-                </property>
-                <property name="tickPosition">
-                 <enum>QSlider::TicksAbove</enum>
-                </property>
-                <property name="tickInterval">
-                 <number>50</number>
+               <widget class="QLabel" name="label_18">
+                <property name="text">
+                 <string>-28°</string>
                 </property>
                </widget>
               </item>
              </layout>
             </item>
             <item>
+             <widget class="QGroupBox" name="groupBox_5">
+              <property name="title">
+               <string/>
+              </property>
+              <layout class="QHBoxLayout" name="horizontalLayout_19">
+               <property name="spacing">
+                <number>0</number>
+               </property>
+               <property name="leftMargin">
+                <number>2</number>
+               </property>
+               <property name="topMargin">
+                <number>2</number>
+               </property>
+               <property name="rightMargin">
+                <number>2</number>
+               </property>
+               <property name="bottomMargin">
+                <number>2</number>
+               </property>
+               <item>
+                <widget class="QSlider" name="horizontalSlider_az_r">
+                 <property name="minimum">
+                  <number>-280</number>
+                 </property>
+                 <property name="maximum">
+                  <number>0</number>
+                 </property>
+                 <property name="singleStep">
+                  <number>1</number>
+                 </property>
+                 <property name="pageStep">
+                  <number>50</number>
+                 </property>
+                 <property name="sliderPosition">
+                  <number>0</number>
+                 </property>
+                 <property name="orientation">
+                  <enum>Qt::Horizontal</enum>
+                 </property>
+                 <property name="invertedAppearance">
+                  <bool>true</bool>
+                 </property>
+                 <property name="tickPosition">
+                  <enum>QSlider::TicksAbove</enum>
+                 </property>
+                 <property name="tickInterval">
+                  <number>50</number>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </widget>
+            </item>
+            <item>
              <layout class="QHBoxLayout" name="horizontalLayout_15">
               <item>
-               <widget class="QSlider" name="verticalSlider_el_rl">
-                <property name="minimum">
-                 <number>-40</number>
+               <widget class="QGroupBox" name="groupBox_7">
+                <property name="title">
+                 <string/>
                 </property>
-                <property name="maximum">
-                 <number>50</number>
-                </property>
-                <property name="singleStep">
-                 <number>1</number>
-                </property>
-                <property name="pageStep">
-                 <number>50</number>
-                </property>
-                <property name="value">
-                 <number>-40</number>
-                </property>
-                <property name="orientation">
-                 <enum>Qt::Vertical</enum>
-                </property>
-                <property name="invertedAppearance">
-                 <bool>true</bool>
-                </property>
-                <property name="tickPosition">
-                 <enum>QSlider::TicksBelow</enum>
-                </property>
-                <property name="tickInterval">
-                 <number>50</number>
-                </property>
+                <layout class="QHBoxLayout" name="horizontalLayout_14">
+                 <property name="spacing">
+                  <number>0</number>
+                 </property>
+                 <property name="leftMargin">
+                  <number>2</number>
+                 </property>
+                 <property name="topMargin">
+                  <number>2</number>
+                 </property>
+                 <property name="rightMargin">
+                  <number>2</number>
+                 </property>
+                 <property name="bottomMargin">
+                  <number>2</number>
+                 </property>
+                 <item>
+                  <widget class="QSlider" name="verticalSlider_el_rl">
+                   <property name="minimum">
+                    <number>-40</number>
+                   </property>
+                   <property name="maximum">
+                    <number>50</number>
+                   </property>
+                   <property name="singleStep">
+                    <number>1</number>
+                   </property>
+                   <property name="pageStep">
+                    <number>50</number>
+                   </property>
+                   <property name="value">
+                    <number>-40</number>
+                   </property>
+                   <property name="orientation">
+                    <enum>Qt::Vertical</enum>
+                   </property>
+                   <property name="invertedAppearance">
+                    <bool>true</bool>
+                   </property>
+                   <property name="tickPosition">
+                    <enum>QSlider::TicksBelow</enum>
+                   </property>
+                   <property name="tickInterval">
+                    <number>50</number>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
                </widget>
               </item>
               <item>
                <layout class="QVBoxLayout" name="verticalLayout_13">
                 <item>
-                 <widget class="QLabel" name="label_9">
-                  <property name="font">
-                   <font>
-                    <pointsize>12</pointsize>
-                    <bold>true</bold>
-                   </font>
-                  </property>
+                 <widget class="QLabel" name="label_3">
                   <property name="text">
-                   <string>-</string>
+                   <string>-4°</string>
                   </property>
                  </widget>
+                </item>
+                <item>
+                 <spacer name="verticalSpacer_13">
+                  <property name="orientation">
+                   <enum>Qt::Vertical</enum>
+                  </property>
+                  <property name="sizeHint" stdset="0">
+                   <size>
+                    <width>20</width>
+                    <height>0</height>
+                   </size>
+                  </property>
+                 </spacer>
                 </item>
                 <item>
                  <widget class="QDoubleSpinBox" name="doubleSpinBox_el_rl">
@@ -1053,15 +1254,22 @@
                  </widget>
                 </item>
                 <item>
-                 <widget class="QLabel" name="label_10">
-                  <property name="font">
-                   <font>
-                    <pointsize>12</pointsize>
-                    <bold>true</bold>
-                   </font>
+                 <spacer name="verticalSpacer_14">
+                  <property name="orientation">
+                   <enum>Qt::Vertical</enum>
                   </property>
+                  <property name="sizeHint" stdset="0">
+                   <size>
+                    <width>20</width>
+                    <height>0</height>
+                   </size>
+                  </property>
+                 </spacer>
+                </item>
+                <item>
+                 <widget class="QLabel" name="label_elr1">
                   <property name="text">
-                   <string>+</string>
+                   <string>+5°</string>
                   </property>
                  </widget>
                 </item>
@@ -1082,6 +1290,9 @@
               </item>
               <item>
                <layout class="QVBoxLayout" name="verticalLayout_9">
+                <property name="spacing">
+                 <number>0</number>
+                </property>
                 <item>
                  <spacer name="verticalSpacer_4">
                   <property name="orientation">
@@ -1098,7 +1309,7 @@
                 <item>
                  <widget class="QGroupBox" name="groupBox_6">
                   <property name="title">
-                   <string>Polarization</string>
+                   <string/>
                   </property>
                   <property name="alignment">
                    <set>Qt::AlignCenter</set>
@@ -1106,6 +1317,12 @@
                   <layout class="QVBoxLayout" name="verticalLayout_10">
                    <item>
                     <widget class="QDial" name="dial_pol_r">
+                     <property name="minimumSize">
+                      <size>
+                       <width>80</width>
+                       <height>80</height>
+                      </size>
+                     </property>
                      <property name="minimum">
                       <number>-90</number>
                      </property>
@@ -1146,6 +1363,9 @@
                      </item>
                      <item>
                       <widget class="QDoubleSpinBox" name="doubleSpinBox_pol_r">
+                       <property name="prefix">
+                        <string>Polar: </string>
+                       </property>
                        <property name="suffix">
                         <string>°</string>
                        </property>
@@ -1212,20 +1432,27 @@
               <item>
                <layout class="QVBoxLayout" name="verticalLayout_14">
                 <item>
-                 <widget class="QLabel" name="label_11">
-                  <property name="font">
-                   <font>
-                    <pointsize>12</pointsize>
-                    <bold>true</bold>
-                   </font>
-                  </property>
+                 <widget class="QLabel" name="label_19">
                   <property name="text">
-                   <string>-</string>
+                   <string>-4°</string>
                   </property>
                   <property name="alignment">
                    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
                   </property>
                  </widget>
+                </item>
+                <item>
+                 <spacer name="verticalSpacer_15">
+                  <property name="orientation">
+                   <enum>Qt::Vertical</enum>
+                  </property>
+                  <property name="sizeHint" stdset="0">
+                   <size>
+                    <width>20</width>
+                    <height>0</height>
+                   </size>
+                  </property>
+                 </spacer>
                 </item>
                 <item>
                  <widget class="QDoubleSpinBox" name="doubleSpinBox_el_rr">
@@ -1256,15 +1483,22 @@
                  </widget>
                 </item>
                 <item>
-                 <widget class="QLabel" name="label_12">
-                  <property name="font">
-                   <font>
-                    <pointsize>12</pointsize>
-                    <bold>true</bold>
-                   </font>
+                 <spacer name="verticalSpacer_16">
+                  <property name="orientation">
+                   <enum>Qt::Vertical</enum>
                   </property>
+                  <property name="sizeHint" stdset="0">
+                   <size>
+                    <width>20</width>
+                    <height>0</height>
+                   </size>
+                  </property>
+                 </spacer>
+                </item>
+                <item>
+                 <widget class="QLabel" name="label_elr2">
                   <property name="text">
-                   <string>+</string>
+                   <string>+5°</string>
                   </property>
                   <property name="alignment">
                    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -1274,40 +1508,64 @@
                </layout>
               </item>
               <item>
-               <widget class="QSlider" name="verticalSlider_el_rr">
-                <property name="enabled">
-                 <bool>false</bool>
+               <widget class="QGroupBox" name="groupBox_8">
+                <property name="title">
+                 <string/>
                 </property>
-                <property name="minimum">
-                 <number>-40</number>
-                </property>
-                <property name="maximum">
-                 <number>50</number>
-                </property>
-                <property name="singleStep">
-                 <number>1</number>
-                </property>
-                <property name="pageStep">
-                 <number>50</number>
-                </property>
-                <property name="value">
-                 <number>-40</number>
-                </property>
-                <property name="orientation">
-                 <enum>Qt::Vertical</enum>
-                </property>
-                <property name="invertedAppearance">
-                 <bool>true</bool>
-                </property>
-                <property name="invertedControls">
-                 <bool>false</bool>
-                </property>
-                <property name="tickPosition">
-                 <enum>QSlider::TicksAbove</enum>
-                </property>
-                <property name="tickInterval">
-                 <number>50</number>
-                </property>
+                <layout class="QHBoxLayout" name="horizontalLayout_20">
+                 <property name="spacing">
+                  <number>0</number>
+                 </property>
+                 <property name="leftMargin">
+                  <number>2</number>
+                 </property>
+                 <property name="topMargin">
+                  <number>2</number>
+                 </property>
+                 <property name="rightMargin">
+                  <number>2</number>
+                 </property>
+                 <property name="bottomMargin">
+                  <number>2</number>
+                 </property>
+                 <item>
+                  <widget class="QSlider" name="verticalSlider_el_rr">
+                   <property name="enabled">
+                    <bool>false</bool>
+                   </property>
+                   <property name="minimum">
+                    <number>-40</number>
+                   </property>
+                   <property name="maximum">
+                    <number>50</number>
+                   </property>
+                   <property name="singleStep">
+                    <number>1</number>
+                   </property>
+                   <property name="pageStep">
+                    <number>50</number>
+                   </property>
+                   <property name="value">
+                    <number>-40</number>
+                   </property>
+                   <property name="orientation">
+                    <enum>Qt::Vertical</enum>
+                   </property>
+                   <property name="invertedAppearance">
+                    <bool>true</bool>
+                   </property>
+                   <property name="invertedControls">
+                    <bool>false</bool>
+                   </property>
+                   <property name="tickPosition">
+                    <enum>QSlider::TicksAbove</enum>
+                   </property>
+                   <property name="tickInterval">
+                    <number>50</number>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
                </widget>
               </item>
              </layout>
@@ -1318,6 +1576,19 @@
                <enum>Qt::Horizontal</enum>
               </property>
              </widget>
+            </item>
+            <item>
+             <spacer name="verticalSpacer_8">
+              <property name="orientation">
+               <enum>Qt::Vertical</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>20</width>
+                <height>6</height>
+               </size>
+              </property>
+             </spacer>
             </item>
             <item>
              <widget class="QPushButton" name="pushButton_set_r">
@@ -1354,7 +1625,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1125</width>
+     <width>877</width>
      <height>22</height>
     </rect>
    </property>

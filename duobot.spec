@@ -3,8 +3,8 @@
 block_cipher = None
 
 
-a = Analysis(['dual-bot.py'],
-             pathex=['./dual-bot'],
+a = Analysis(['duobot.py'],
+             pathex=['./duobot'],
              binaries=[],
              datas=[('./res', 'res')],
              hiddenimports=[],
@@ -21,13 +21,13 @@ exe = EXE(pyz,
           a.scripts,
           [],
           exclude_binaries=True,
-          name='dual-bot',
+          name='duobot',
           debug=False,
           bootloader_ignore_signals=False,
           strip=False,
           upx=True,
           console=False,
-          icon='res/dual-bot.ico' )
+          icon='res/duobot.ico' )
 coll = COLLECT(exe,
                a.binaries,
                a.zipfiles,
@@ -35,4 +35,4 @@ coll = COLLECT(exe,
                strip=False,
                upx=True,
                upx_exclude=[],
-               name='dual-bot')
+               name='duobot')
