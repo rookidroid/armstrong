@@ -137,6 +137,8 @@ class MyApp(QtWidgets.QMainWindow):
         self.ui.show()
 
     def init_ui(self):
+        self.ui.pushButton_ctrl.setStyleSheet(
+            "background-color: green; color: white;")
         self.ui.groupBox_ctrl.setEnabled(False)
 
         self.ui.comboBox_coord.addItems([
@@ -614,8 +616,10 @@ class MyApp(QtWidgets.QMainWindow):
         self.ui.pushButton_set.setEnabled(True)
 
     def on_ctrl_connect_button_clicked(self):
-        if self.ui.pushButton_ctrl.text() == 'Connect and Initialize':
+        if self.ui.pushButton_ctrl.text() == 'START':
             self.ui.pushButton_ctrl.setEnabled(False)
+            self.ui.pushButton_ctrl.setStyleSheet(
+            "background-color: grey; color: white;")
 
             self.ui.lineEdit_ip.setEnabled(False)
             self.ui.lineEdit_ctrl_port.setEnabled(False)
@@ -633,7 +637,7 @@ class MyApp(QtWidgets.QMainWindow):
             self.ctrl_socket.moveToThread(self.ctrl_thread)
             self.ctrl_thread.start()
 
-        elif self.ui.pushButton_ctrl.text() == 'Stop and Disconnect':
+        elif self.ui.pushButton_ctrl.text() == 'STOP':
 
             self.display_message('1;1;STOP')
             self.ctrl_socket.sendrecv('1;1;STOP')
@@ -643,12 +647,16 @@ class MyApp(QtWidgets.QMainWindow):
             self.ctrl_socket.sendrecv('1;1;CNTLOFF')
 
             self.ui.pushButton_ctrl.setEnabled(False)
+            self.ui.pushButton_ctrl.setStyleSheet(
+            "background-color: grey; color: white;")
             self.ctrl_socket.close()
             self.cmd_socket.close()
 
     def on_ctrl_status_update(self, status, addr):
         if status == TCPClient.STOP:
-            self.ui.pushButton_ctrl.setText('Connect and Initialize')
+            self.ui.pushButton_ctrl.setText('START')
+            self.ui.pushButton_ctrl.setStyleSheet(
+            "background-color: green; color: white;")
 
             self.ctrl_socket.status.disconnect()
             self.ctrl_socket.message.disconnect()
@@ -682,7 +690,9 @@ class MyApp(QtWidgets.QMainWindow):
         if status == TCPClient.STOP:
             self.ctrl_socket.close()
 
-            self.ui.pushButton_ctrl.setText('Connect and Initialize')
+            self.ui.pushButton_ctrl.setText('START')
+            self.ui.pushButton_ctrl.setStyleSheet(
+            "background-color: red; color: white;")
 
             self.cmd_socket.status.disconnect()
             self.cmd_socket.message.disconnect()
@@ -701,7 +711,7 @@ class MyApp(QtWidgets.QMainWindow):
             self.config['CMD_PORT'] = self.ui.lineEdit_cmd_port.text()
             self.save_config()
 
-            # self.ui.pushButton_init.setText('Stop')
+            # self.ui.pushButton_init.setText('STOP')
 
             speed = self.ui.spinBox_speed.value()
 
@@ -730,7 +740,9 @@ class MyApp(QtWidgets.QMainWindow):
 
                 self.ui.groupBox_ctrl.setEnabled(True)
 
-            self.ui.pushButton_ctrl.setText('Stop and Disconnect')
+            self.ui.pushButton_ctrl.setText('STOP')
+            self.ui.pushButton_ctrl.setStyleSheet(
+            "background-color: Red; color: white;")
         self.ui.pushButton_ctrl.setEnabled(True)
 
     def on_tcp_client_message_ready(self, msg):
