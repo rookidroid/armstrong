@@ -25,7 +25,7 @@ ROLL_MAX = 180
 # Z_MIN = -100
 # Z_MAX = 100
 # TOOL_MIN = 0
-# TOOL_MAX = 200
+# TOOL_MAX = 250
 THETA_Y_MIN = -90
 THETA_Y_MAX = 90
 THETA_Z_MIN = -90
@@ -167,6 +167,19 @@ class MyApp(QtWidgets.QMainWindow):
         self.ui.doubleSpinBox_tool.setValue(self.config['TOOL'])
 
         self.save_config()
+
+        self.ui.lineEdit_ip.setToolTip(
+            'Robot\'s IP address, default is 192.168.0.20')
+        self.ui.lineEdit_ctrl_port.setToolTip(
+            'Robot\'s control port, default is 10002')
+        self.ui.lineEdit_cmd_port.setToolTip(
+            'Robot\'s command port, default is 10003')
+        self.ui.spinBox_speed.setToolTip('Speed limitation')
+        self.ui.pushButton_load.setToolTip('Move robot to \'Load\' position')
+        self.ui.pushButton_home.setToolTip(
+            'Move robot to \'Home (boresight)\' position, takes the value of \'tool length\'')
+        self.ui.pushButton_minrange.setToolTip(
+            'Move robot to \'Min Range\' test position')
 
     def save_config(self):
         try:
@@ -338,20 +351,27 @@ class MyApp(QtWidgets.QMainWindow):
 
         err = ''
 
-        if theta_v == 0:
+        if theta_h == 0 and theta_v != 0:
+            yaw = -theta_v
+            roll = -90+roll_offset
+        elif theta_h != 0 and theta_v == 0:
             yaw = -theta_h
-        elif abs(math.sin(theta_v_rad)/math.sin(math.atan2(
-                math.sin(theta_v_rad), math.sin(theta_h_rad)))) <= 1:
-            yaw = -math.asin(math.sin(theta_v_rad)/math.sin(math.atan2(
-                math.sin(theta_v_rad), math.sin(theta_h_rad))))/PI*180.0
+            roll = roll_offset
+        elif theta_h == 0 and theta_v == 0:
+            yaw = 0
+            roll = roll_offset
+        elif abs(math.sin(theta_v_rad)/math.sin(math.atan(
+                math.sin(theta_v_rad)/math.sin(theta_h_rad)))) <= 1:
+            yaw = -math.asin(math.sin(theta_v_rad)/math.sin(math.atan(
+                math.sin(theta_v_rad)/math.sin(theta_h_rad))))/PI*180.0
+            roll = -math.atan(math.sin(theta_v_rad) /
+                              math.sin(theta_h_rad))/PI*180.0+roll_offset
         else:
             yaw = 0
             err = 'DoA error: impossible DoA angle'
             return 0, 0, 0, err
 
         pitch = 0.0
-        roll = -math.atan2(math.sin(theta_v_rad),
-                           math.sin(theta_h_rad))/PI*180.0+roll_offset
 
         return yaw, pitch, roll, err
 
@@ -399,15 +419,22 @@ class MyApp(QtWidgets.QMainWindow):
         el_rad = elevation/180.0*PI
         err = ''
 
-        if elevation == 0:
+        if azimuth == 0 and elevation != 0:
+            yaw = -elevation
+            roll = -90+roll_offset
+        elif azimuth != 0 and elevation == 0:
             yaw = -azimuth
+            roll = roll_offset
+        elif azimuth == 0 and elevation == 0:
+            yaw = 0
+            roll = roll_offset
         else:
             yaw = -math.asin(math.sin(el_rad) /
-                             math.sin(math.atan2(math.tan(el_rad),
-                                                 math.sin(az_rad))))/PI*180.0
+                             math.sin(math.atan(math.tan(el_rad) /
+                                                math.sin(az_rad))))/PI*180.0
+            roll = -math.atan(math.tan(el_rad)/math.sin(az_rad)
+                              )/PI*180.0+roll_offset
         pitch = 0.0
-        roll = -math.atan2(math.tan(el_rad), math.sin(az_rad)
-                           )/PI*180.0+roll_offset
 
         return yaw, pitch, roll, err
 
