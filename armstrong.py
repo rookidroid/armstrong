@@ -619,7 +619,7 @@ class MyApp(QtWidgets.QMainWindow):
         if self.ui.pushButton_ctrl.text() == 'START':
             self.ui.pushButton_ctrl.setEnabled(False)
             self.ui.pushButton_ctrl.setStyleSheet(
-            "background-color: grey; color: white;")
+                "background-color: grey; color: white;")
 
             self.ui.lineEdit_ip.setEnabled(False)
             self.ui.lineEdit_ctrl_port.setEnabled(False)
@@ -638,6 +638,9 @@ class MyApp(QtWidgets.QMainWindow):
             self.ctrl_thread.start()
 
         elif self.ui.pushButton_ctrl.text() == 'STOP':
+            self.ui.pushButton_ctrl.setEnabled(False)
+            self.ui.pushButton_ctrl.setStyleSheet(
+                "background-color: grey; color: white;")
 
             self.display_message('1;1;STOP')
             self.ctrl_socket.sendrecv('1;1;STOP')
@@ -646,9 +649,6 @@ class MyApp(QtWidgets.QMainWindow):
             self.display_message('1;1;CNTLOFF')
             self.ctrl_socket.sendrecv('1;1;CNTLOFF')
 
-            self.ui.pushButton_ctrl.setEnabled(False)
-            self.ui.pushButton_ctrl.setStyleSheet(
-            "background-color: grey; color: white;")
             self.ctrl_socket.close()
             self.cmd_socket.close()
 
@@ -656,7 +656,7 @@ class MyApp(QtWidgets.QMainWindow):
         if status == TCPClient.STOP:
             self.ui.pushButton_ctrl.setText('START')
             self.ui.pushButton_ctrl.setStyleSheet(
-            "background-color: green; color: white;")
+                "background-color: green; color: white;")
 
             self.ctrl_socket.status.disconnect()
             self.ctrl_socket.message.disconnect()
@@ -692,7 +692,7 @@ class MyApp(QtWidgets.QMainWindow):
 
             self.ui.pushButton_ctrl.setText('START')
             self.ui.pushButton_ctrl.setStyleSheet(
-            "background-color: red; color: white;")
+                "background-color: green; color: white;")
 
             self.cmd_socket.status.disconnect()
             self.cmd_socket.message.disconnect()
@@ -742,7 +742,7 @@ class MyApp(QtWidgets.QMainWindow):
 
             self.ui.pushButton_ctrl.setText('STOP')
             self.ui.pushButton_ctrl.setStyleSheet(
-            "background-color: Red; color: white;")
+                "background-color: Red; color: white;")
         self.ui.pushButton_ctrl.setEnabled(True)
 
     def on_tcp_client_message_ready(self, msg):
