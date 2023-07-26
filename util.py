@@ -10,6 +10,10 @@ def start_sequence(msg_obj, ctrl_obj):
     if ctrl_obj.send_wait('1;1;STOP'):
         return 1
 
+    msg_obj('1;1;SRVOFF')
+    if ctrl_obj.send_wait('1;1;SRVOFF'):
+        return 1
+
     msg_obj('1;1;OPEN=')
     if ctrl_obj.send_wait('1;1;OPEN='):
         return 1

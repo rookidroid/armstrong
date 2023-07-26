@@ -90,7 +90,7 @@
               <double>10.000000000000000</double>
              </property>
              <property name="maximum">
-              <double>25.000000000000000</double>
+              <double>100.000000000000000</double>
              </property>
              <property name="value">
               <double>25.000000000000000</double>
@@ -215,6 +215,9 @@
                 <property name="buttonSymbols">
                  <enum>QAbstractSpinBox::UpDownArrows</enum>
                 </property>
+                <property name="correctionMode">
+                 <enum>QAbstractSpinBox::CorrectToNearestValue</enum>
+                </property>
                 <property name="prefix">
                  <string>Az: </string>
                 </property>
@@ -335,7 +338,7 @@
                  <item>
                   <widget class="QSlider" name="verticalSlider_el_ll">
                    <property name="minimum">
-                    <number>-40</number>
+                    <number>-10</number>
                    </property>
                    <property name="maximum">
                     <number>50</number>
@@ -347,7 +350,7 @@
                     <number>50</number>
                    </property>
                    <property name="value">
-                    <number>-40</number>
+                    <number>0</number>
                    </property>
                    <property name="orientation">
                     <enum>Qt::Vertical</enum>
@@ -371,7 +374,7 @@
                 <item>
                  <widget class="QLabel" name="label_15">
                   <property name="text">
-                   <string>-4°</string>
+                   <string>-1°</string>
                   </property>
                  </widget>
                 </item>
@@ -390,8 +393,17 @@
                 </item>
                 <item>
                  <widget class="QDoubleSpinBox" name="doubleSpinBox_el_ll">
+                  <property name="layoutDirection">
+                   <enum>Qt::LeftToRight</enum>
+                  </property>
+                  <property name="frame">
+                   <bool>true</bool>
+                  </property>
                   <property name="buttonSymbols">
                    <enum>QAbstractSpinBox::UpDownArrows</enum>
+                  </property>
+                  <property name="correctionMode">
+                   <enum>QAbstractSpinBox::CorrectToNearestValue</enum>
                   </property>
                   <property name="prefix">
                    <string>El: </string>
@@ -403,7 +415,7 @@
                    <number>1</number>
                   </property>
                   <property name="minimum">
-                   <double>-4.000000000000000</double>
+                   <double>-1.000000000000000</double>
                   </property>
                   <property name="maximum">
                    <double>5.000000000000000</double>
@@ -412,7 +424,7 @@
                    <double>0.100000000000000</double>
                   </property>
                   <property name="value">
-                   <double>-4.000000000000000</double>
+                   <double>0.000000000000000</double>
                   </property>
                  </widget>
                 </item>
@@ -523,6 +535,9 @@
                      </item>
                      <item>
                       <widget class="QDoubleSpinBox" name="doubleSpinBox_pol_l">
+                       <property name="correctionMode">
+                        <enum>QAbstractSpinBox::CorrectToNearestValue</enum>
+                       </property>
                        <property name="prefix">
                         <string>Polar: </string>
                        </property>
@@ -594,7 +609,7 @@
                 <item>
                  <widget class="QLabel" name="label">
                   <property name="text">
-                   <string>-4°</string>
+                   <string>-1°</string>
                   </property>
                   <property name="alignment">
                    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -619,6 +634,9 @@
                   <property name="buttonSymbols">
                    <enum>QAbstractSpinBox::UpDownArrows</enum>
                   </property>
+                  <property name="correctionMode">
+                   <enum>QAbstractSpinBox::CorrectToNearestValue</enum>
+                  </property>
                   <property name="prefix">
                    <string>El: </string>
                   </property>
@@ -629,7 +647,7 @@
                    <number>1</number>
                   </property>
                   <property name="minimum">
-                   <double>-4.000000000000000</double>
+                   <double>-1.000000000000000</double>
                   </property>
                   <property name="maximum">
                    <double>5.000000000000000</double>
@@ -638,7 +656,7 @@
                    <double>0.100000000000000</double>
                   </property>
                   <property name="value">
-                   <double>-4.000000000000000</double>
+                   <double>0.000000000000000</double>
                   </property>
                  </widget>
                 </item>
@@ -697,7 +715,7 @@
                     </sizepolicy>
                    </property>
                    <property name="minimum">
-                    <number>-40</number>
+                    <number>-10</number>
                    </property>
                    <property name="maximum">
                     <number>50</number>
@@ -709,7 +727,7 @@
                     <number>50</number>
                    </property>
                    <property name="value">
-                    <number>-40</number>
+                    <number>0</number>
                    </property>
                    <property name="orientation">
                     <enum>Qt::Vertical</enum>
@@ -912,7 +930,7 @@
               <double>10.000000000000000</double>
              </property>
              <property name="maximum">
-              <double>25.000000000000000</double>
+              <double>100.000000000000000</double>
              </property>
              <property name="value">
               <double>25.000000000000000</double>
@@ -1049,6 +1067,9 @@
                 <property name="buttonSymbols">
                  <enum>QAbstractSpinBox::UpDownArrows</enum>
                 </property>
+                <property name="correctionMode">
+                 <enum>QAbstractSpinBox::CorrectToNearestValue</enum>
+                </property>
                 <property name="prefix">
                  <string>Az: </string>
                 </property>
@@ -1172,7 +1193,7 @@
                  <item>
                   <widget class="QSlider" name="verticalSlider_el_rl">
                    <property name="minimum">
-                    <number>-40</number>
+                    <number>-10</number>
                    </property>
                    <property name="maximum">
                     <number>50</number>
@@ -1184,7 +1205,7 @@
                     <number>50</number>
                    </property>
                    <property name="value">
-                    <number>-40</number>
+                    <number>0</number>
                    </property>
                    <property name="orientation">
                     <enum>Qt::Vertical</enum>
@@ -1208,7 +1229,7 @@
                 <item>
                  <widget class="QLabel" name="label_3">
                   <property name="text">
-                   <string>-4°</string>
+                   <string>-1°</string>
                   </property>
                  </widget>
                 </item>
@@ -1230,6 +1251,9 @@
                   <property name="buttonSymbols">
                    <enum>QAbstractSpinBox::UpDownArrows</enum>
                   </property>
+                  <property name="correctionMode">
+                   <enum>QAbstractSpinBox::CorrectToNearestValue</enum>
+                  </property>
                   <property name="prefix">
                    <string>El: </string>
                   </property>
@@ -1240,7 +1264,7 @@
                    <number>1</number>
                   </property>
                   <property name="minimum">
-                   <double>-4.000000000000000</double>
+                   <double>-1.000000000000000</double>
                   </property>
                   <property name="maximum">
                    <double>5.000000000000000</double>
@@ -1249,7 +1273,7 @@
                    <double>0.100000000000000</double>
                   </property>
                   <property name="value">
-                   <double>-4.000000000000000</double>
+                   <double>0.000000000000000</double>
                   </property>
                  </widget>
                 </item>
@@ -1363,6 +1387,9 @@
                      </item>
                      <item>
                       <widget class="QDoubleSpinBox" name="doubleSpinBox_pol_r">
+                       <property name="correctionMode">
+                        <enum>QAbstractSpinBox::CorrectToNearestValue</enum>
+                       </property>
                        <property name="prefix">
                         <string>Polar: </string>
                        </property>
@@ -1434,7 +1461,7 @@
                 <item>
                  <widget class="QLabel" name="label_19">
                   <property name="text">
-                   <string>-4°</string>
+                   <string>-1°</string>
                   </property>
                   <property name="alignment">
                    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -1456,8 +1483,8 @@
                 </item>
                 <item>
                  <widget class="QDoubleSpinBox" name="doubleSpinBox_el_rr">
-                  <property name="buttonSymbols">
-                   <enum>QAbstractSpinBox::UpDownArrows</enum>
+                  <property name="correctionMode">
+                   <enum>QAbstractSpinBox::CorrectToNearestValue</enum>
                   </property>
                   <property name="prefix">
                    <string>El: </string>
@@ -1469,7 +1496,7 @@
                    <number>1</number>
                   </property>
                   <property name="minimum">
-                   <double>-4.000000000000000</double>
+                   <double>-1.000000000000000</double>
                   </property>
                   <property name="maximum">
                    <double>5.000000000000000</double>
@@ -1478,7 +1505,7 @@
                    <double>0.100000000000000</double>
                   </property>
                   <property name="value">
-                   <double>-4.000000000000000</double>
+                   <double>0.000000000000000</double>
                   </property>
                  </widget>
                 </item>
@@ -1534,7 +1561,7 @@
                     <bool>false</bool>
                    </property>
                    <property name="minimum">
-                    <number>-40</number>
+                    <number>-10</number>
                    </property>
                    <property name="maximum">
                     <number>50</number>
@@ -1546,7 +1573,7 @@
                     <number>50</number>
                    </property>
                    <property name="value">
-                    <number>-40</number>
+                    <number>0</number>
                    </property>
                    <property name="orientation">
                     <enum>Qt::Vertical</enum>

@@ -13,7 +13,7 @@ from util import html_received_msg, html_sent_msg, html_err_msg
 
 AZ_CENTER_THOD = 0
 AZ_EDGE_THOD = 28
-EL_UP_THOD = -2
+EL_UP_THOD = 1
 
 AZ_MARGIN = 1.5
 
@@ -23,7 +23,14 @@ class MyApp(QtWidgets.QMainWindow):
     def __init__(self):
         super(MyApp, self).__init__()
 
-        self.version = 'v2.0'
+        self.version = 'v2.1'
+
+        self.az_l = 0
+        self.el_l = 0
+        self.pol_l = 0
+        self.az_r = 0
+        self.el_r = 0
+        self.pol_r = 0
 
         config_file = Path('config.json')
         if config_file.exists():
@@ -40,10 +47,9 @@ class MyApp(QtWidgets.QMainWindow):
         ui_file.close()
         self.init_ui()
 
-        self.ui.pushButton_start.clicked.connect(
-            self.on_connect_button_clicked_right)
-        self.ui.pushButton_start.clicked.connect(
-            self.on_connect_button_clicked_left)
+        if not self.dev_mode:
+            self.ui.pushButton_start.clicked.connect(
+                self.on_connect_button_clicked_left)
 
         self.ui.pushButton_connect_r.clicked.connect(
             self.on_connect_button_clicked_right)
@@ -271,18 +277,21 @@ class MyApp(QtWidgets.QMainWindow):
 
     def on_tcp_client_message_ready_right(self, msg):
         msg_list = msg.split()
-        if msg_list[0] == 'Right':
-            az = float(msg_list[3])
-            el = float(msg_list[4])
-            pol = float(msg_list[5])
-            self.ui.doubleSpinBox_az_r.setValue(az)
-            self.ui.doubleSpinBox_el_rl.setValue(el)
-            self.ui.doubleSpinBox_pol_r.setValue(pol)
+        # if msg_list[0] == 'Right':
+        if msg_list[0] == self.config['RIGHT_SN']:
+            self.az_r = float(msg_list[2])
+            self.el_r = float(msg_list[3])
+            self.pol_r = float(msg_list[4])
+            self.ui.doubleSpinBox_az_r.setValue(self.az_r)
+            self.ui.doubleSpinBox_el_rl.setValue(self.el_r)
+            self.ui.doubleSpinBox_pol_r.setValue(self.pol_r)
 
             self.ui.groupBox_r.setEnabled(True)
             self.ui.groupBox_rightbot.setEnabled(True)
 
-            if msg_list[2] == '+2':
+            self.ui.pushButton_set_r.setEnabled(False)
+
+            if msg_list[1] == '+2':
                 self.ui.groupBox_leftbot.setEnabled(True)
 
         self.ui.textBrowser_r.append(html_received_msg(msg))
@@ -426,10 +435,9 @@ class MyApp(QtWidgets.QMainWindow):
 
     def on_set_button_clicked_right(self):
 
-        left_az = self.ui.doubleSpinBox_az_l.value()
         right_az = self.ui.doubleSpinBox_az_r.value()
 
-        if abs(right_az-left_az) >= AZ_MARGIN:
+        if abs(right_az-self.az_l) >= AZ_MARGIN:
             self.ui.groupBox_rightbot.setEnabled(False)
             self.ui.groupBox_leftbot.setEnabled(False)
             self.ui.pushButton_set_r.setEnabled(False)
@@ -554,43 +562,50 @@ class MyApp(QtWidgets.QMainWindow):
                 self.cmd_socket_l.send_wait(msg)
 
             self.ui.pushButton_connect_l.setText('STOP')
+
         self.ui.pushButton_connect_l.setEnabled(True)
 
         if not self.dev_mode:
-            if self.ui.pushButton_connect_r.text() == 'STOP' and \
-                    self.ui.pushButton_connect_l.text() == 'STOP' and \
-                    self.ui.pushButton_connect_r.isEnabled() and \
-                    self.ui.pushButton_connect_l.isEnabled():
+            self.on_connect_button_clicked_right()
 
-                self.ui.pushButton_start.setStyleSheet(
-                    "background-color: red; color: white;")
-                self.ui.pushButton_start.setText('STOP')
-                self.ui.pushButton_start.setEnabled(True)
-            elif self.ui.pushButton_connect_r.text() == 'START' and \
-                    self.ui.pushButton_connect_l.text() == 'START' and \
-                    self.ui.pushButton_connect_r.isEnabled() and \
-                    self.ui.pushButton_connect_l.isEnabled():
+        # if not self.dev_mode:
+        #     if self.ui.pushButton_connect_r.text() == 'STOP' and \
+        #             self.ui.pushButton_connect_l.text() == 'STOP' and \
+        #             self.ui.pushButton_connect_r.isEnabled() and \
+        #             self.ui.pushButton_connect_l.isEnabled():
 
-                self.ui.pushButton_start.setStyleSheet(
-                    "background-color: green; color: white;")
-                self.ui.pushButton_start.setText('START')
-                self.ui.pushButton_start.setEnabled(True)
+        #         self.ui.pushButton_start.setStyleSheet(
+        #             "background-color: red; color: white;")
+        #         self.ui.pushButton_start.setText('STOP')
+        #         self.ui.pushButton_start.setEnabled(True)
+        #     elif self.ui.pushButton_connect_r.text() == 'START' and \
+        #             self.ui.pushButton_connect_l.text() == 'START' and \
+        #             self.ui.pushButton_connect_r.isEnabled() and \
+        #             self.ui.pushButton_connect_l.isEnabled():
+
+        #         self.ui.pushButton_start.setStyleSheet(
+        #             "background-color: green; color: white;")
+        #         self.ui.pushButton_start.setText('START')
+        #         self.ui.pushButton_start.setEnabled(True)
 
     def on_tcp_client_message_ready_left(self, msg):
         msg_list = msg.split()
         # print(msg_list)
-        if msg_list[0] == 'Left':
-            az = float(msg_list[3])
-            el = float(msg_list[4])
-            pol = float(msg_list[5])
-            self.ui.doubleSpinBox_az_l.setValue(az)
-            self.ui.doubleSpinBox_el_ll.setValue(el)
-            self.ui.doubleSpinBox_pol_l.setValue(pol)
+        # if msg_list[0] == 'Left':
+        if msg_list[0] == self.config['LEFT_SN']:
+            self.az_l = float(msg_list[2])
+            self.el_l = float(msg_list[3])
+            self.pol_l = float(msg_list[4])
+            self.ui.doubleSpinBox_az_l.setValue(self.az_l)
+            self.ui.doubleSpinBox_el_ll.setValue(self.el_l)
+            self.ui.doubleSpinBox_pol_l.setValue(self.pol_l)
 
             self.ui.groupBox_l.setEnabled(True)
             self.ui.groupBox_leftbot.setEnabled(True)
 
-            if msg_list[2] == '+2':
+            self.ui.pushButton_set_l.setEnabled(False)
+
+            if msg_list[1] == '+2':
                 self.ui.groupBox_rightbot.setEnabled(True)
 
         self.ui.textBrowser_l.append(html_received_msg(msg))
@@ -735,9 +750,8 @@ class MyApp(QtWidgets.QMainWindow):
 
     def on_set_button_clicked_left(self):
         left_az = self.ui.doubleSpinBox_az_l.value()
-        right_az = self.ui.doubleSpinBox_az_r.value()
 
-        if abs(right_az-left_az) >= AZ_MARGIN:
+        if abs(self.az_r-left_az) >= AZ_MARGIN:
             self.ui.groupBox_leftbot.setEnabled(False)
             self.ui.groupBox_rightbot.setEnabled(False)
             self.ui.pushButton_set_l.setEnabled(False)

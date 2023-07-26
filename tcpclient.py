@@ -24,7 +24,7 @@ class TCPClient(QObject):
         self.ip = ip
         self.port = port
         self.tcp_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.tcp_socket.settimeout(60)
+        self.tcp_socket.settimeout(180)
 
         self.state = self.STATE_RECEIVING
 
