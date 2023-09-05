@@ -10,6 +10,15 @@ import json
 
 from tcpclient import TCPClient
 
+_VERSION_ = 'v3.0'
+STATUS_STR = '<a href=\"https://hpc-gitlab.aptiv.com/zjx8rj/automation/-/tree/main/armstrong_gui\">Source Code</a>' +\
+    '&nbsp;•&nbsp;' +\
+    '<a href=\"https://hpc-gitlab.aptiv.com/zjx8rj/automation/-/issues\">Report a Bug</a>' +\
+    '&nbsp;•&nbsp;' +\
+    '<a href=\"https://hpc-gitlab.aptiv.com/zjx8rj/automation/-/tree/main/armstrong_matlab\">MATLAB API</a>' +\
+    '&nbsp;•&nbsp;' +\
+    '<a href=\"https://hpc-gitlab.aptiv.com/zjx8rj/automation/-/tree/main/#armstrong\">CANape lib</a>'
+
 PI = 3.14159265359
 # SPEED_MAX = 50
 YAW_MIN = -180
@@ -24,8 +33,12 @@ ROLL_MAX = 180
 # Y_MAX = 100
 # Z_MIN = -100
 # Z_MAX = 100
-# TOOL_MIN = 0
-# TOOL_MAX = 250
+# TOOLX_MIN = -100
+# TOOLX_MAX = 100
+# TOOLY_MIN = -100
+# TOOLY_MAX = 100
+# TOOLZ_MIN = 0
+# TOOLZ_MAX = 250
 THETA_Y_MIN = -90
 THETA_Y_MAX = 90
 THETA_Z_MIN = -90
@@ -123,11 +136,25 @@ class MyApp(QtWidgets.QMainWindow):
             self.minrange_spinbox
         )
 
-        self.ui.horizontalSlider_tool.valueChanged.connect(
-            self.tool_slider
+        self.ui.horizontalSlider_toolx.valueChanged.connect(
+            self.tool_slider_x
         )
-        self.ui.doubleSpinBox_tool.valueChanged.connect(
-            self.tool_spinbox
+        self.ui.doubleSpinBox_toolx.valueChanged.connect(
+            self.tool_spinbox_x
+        )
+
+        self.ui.horizontalSlider_tooly.valueChanged.connect(
+            self.tool_slider_y
+        )
+        self.ui.doubleSpinBox_tooly.valueChanged.connect(
+            self.tool_spinbox_y
+        )
+
+        self.ui.horizontalSlider_toolz.valueChanged.connect(
+            self.tool_slider_z
+        )
+        self.ui.doubleSpinBox_toolz.valueChanged.connect(
+            self.tool_spinbox_z
         )
 
         self.ui.comboBox_coord.currentIndexChanged.connect(
@@ -156,32 +183,32 @@ class MyApp(QtWidgets.QMainWindow):
 
         # TCP Client
         self.config['IP'] = self.config.get('IP', '192.168.0.20')
-        self.config['CTRL_PORT'] = self.config.get('CTRL_PORT', '10002')
-        self.config['CMD_PORT'] = self.config.get('CMD_PORT', '10003')
+        self.config['CTRL_PORT'] = self.config.get('CTRL_PORT', 10002)
+        self.config['CMD_PORT'] = self.config.get('CMD_PORT', 10003)
         self.config['SPEED'] = self.config.get('SPEED', 30)
         self.ui.lineEdit_ip.setText(self.config['IP'])
-        self.ui.lineEdit_ctrl_port.setText(self.config['CTRL_PORT'])
-        self.ui.lineEdit_cmd_port.setText(self.config['CMD_PORT'])
+        self.ui.spinBox_ctrl_port.setValue(self.config['CTRL_PORT'])
+        self.ui.spinBox_cmd_port.setValue(self.config['CMD_PORT'])
 
         self.ui.spinBox_speed.setValue(self.config['SPEED'])
 
-        self.config['TOOL'] = self.config.get('TOOL', 60)
-        self.ui.doubleSpinBox_tool.setValue(self.config['TOOL'])
+        self.config['TOOLX'] = self.config.get('TOOLX', 0)
+        self.ui.doubleSpinBox_toolx.setValue(self.config['TOOLX'])
+        self.config['TOOLY'] = self.config.get('TOOLY', 0)
+        self.ui.doubleSpinBox_tooly.setValue(self.config['TOOLY'])
+        self.config['TOOLZ'] = self.config.get('TOOLZ', 60)
+        self.ui.doubleSpinBox_toolz.setValue(self.config['TOOLZ'])
+
+        status_label = QtWidgets.QLabel('&nbsp;'+_VERSION_ + ' • '+STATUS_STR)
+        status_label.setTextFormat(QtCore.Qt.RichText)
+        status_label.setTextInteractionFlags(QtCore.Qt.TextBrowserInteraction)
+        status_label.setOpenExternalLinks(True)
+        self.ui.statusBar().addWidget(status_label)
 
         self.save_config()
 
-        self.ui.lineEdit_ip.setToolTip(
-            'Robot\'s IP address, default is 192.168.0.20')
-        self.ui.lineEdit_ctrl_port.setToolTip(
-            'Robot\'s control port, default is 10002')
-        self.ui.lineEdit_cmd_port.setToolTip(
-            'Robot\'s command port, default is 10003')
-        self.ui.spinBox_speed.setToolTip('Speed limitation')
-        self.ui.pushButton_load.setToolTip('Move robot to \'Load\' position')
-        self.ui.pushButton_home.setToolTip(
-            'Move robot to \'Home (boresight)\' position, takes the value of \'tool length\'')
-        self.ui.pushButton_minrange.setToolTip(
-            'Move robot to \'Min Range\' test position')
+        self.ui.groupBox_ctrl.setStyleSheet(
+            "background-color: #FAFAFA;")
 
     def save_config(self):
         try:
@@ -383,15 +410,15 @@ class MyApp(QtWidgets.QMainWindow):
 
         err = ''
 
-        yaw = theta_v+90.0
+        yaw = -theta_v+90.0
         pitch = 0.0
         if theta_v == 90 and theta_h == 0:
-            roll = -90+roll_offset
+            roll = 90+roll_offset
         elif theta_v == -90 and theta_h == 0:
-            roll = -90+roll_offset
+            roll = 90+roll_offset
         elif abs(math.sin(theta_h_rad) / math.cos(theta_v_rad)) <= 1:
-            roll = math.acos(math.sin(theta_h_rad) /
-                             math.cos(theta_v_rad))/PI*180.0+roll_offset
+            roll = 180-math.acos(math.sin(theta_h_rad) /
+                                 math.cos(theta_v_rad))/PI*180.0+roll_offset
         else:
             err = 'DoA error: impossible DoA angle'
             return 0, 0, 0, err
@@ -456,17 +483,21 @@ class MyApp(QtWidgets.QMainWindow):
         x_offset = '0.0'
         y_offset = '0.0'
         z_offset = '0.0'
-        tool_offset = '0.0'
+        tool_x = '0.0'
+        tool_y = '0.0'
+        tool_z = '0.0'
 
         msg = tsk_cmd+','+azi+','+ele+','+rol+','+x_offset + \
-            ','+y_offset+','+z_offset+','+tool_offset+'\r\n'
+            ','+y_offset+','+z_offset+','+tool_x+','+tool_y+','+tool_z+'\r\n'
 
         self.display_message(msg)
         self.cmd_socket.sendrecv(msg)
         self.ui.pushButton_set.setEnabled(True)
 
     def on_home_button_clicked(self):
-        self.config['TOOL'] = self.ui.doubleSpinBox_tool.value()
+        self.config['TOOLX'] = self.ui.doubleSpinBox_toolx.value()
+        self.config['TOOLY'] = self.ui.doubleSpinBox_tooly.value()
+        self.config['TOOLZ'] = self.ui.doubleSpinBox_toolz.value()
         self.save_config()
 
         tsk_cmd = str(1.0)
@@ -476,16 +507,18 @@ class MyApp(QtWidgets.QMainWindow):
         x_offset = '0.0'
         y_offset = '0.0'
         z_offset = '0.0'
-        tool_offset = str(self.config['TOOL'])
+        tool_x = '0.0'
+        tool_y = '0.0'
+        tool_z = str(self.config['TOOLZ'])
 
         msg = tsk_cmd+','+azi+','+ele+','+rol+','+x_offset + \
-            ','+y_offset+','+z_offset+','+tool_offset+'\r\n'
+            ','+y_offset+','+z_offset+','+tool_x+','+tool_y+','+tool_z+'\r\n'
 
         self.display_message(msg)
         self.cmd_socket.sendrecv(msg)
         self.ui.pushButton_set.setEnabled(True)
 
-        # self.ui.lineEdit_cmd_port.setEnabled(False)
+        # self.ui.spinBox_cmd_port.setEnabled(False)
 
     def on_minrange_button_clicked(self):
         tsk_cmd = str(5.0)
@@ -495,10 +528,12 @@ class MyApp(QtWidgets.QMainWindow):
         x_offset = '0.0'
         y_offset = '0.0'
         z_offset = '0.0'
-        tool_offset = '0.0'
+        tool_x = '0.0'
+        tool_y = '0.0'
+        tool_z = '0.0'
 
         msg = tsk_cmd+','+azi+','+ele+','+rol+','+x_offset + \
-            ','+y_offset+','+z_offset+','+tool_offset+'\r\n'
+            ','+y_offset+','+z_offset+','+tool_x+','+tool_y+','+tool_z+'\r\n'
 
         self.display_message(msg)
         self.cmd_socket.sendrecv(msg)
@@ -549,15 +584,20 @@ class MyApp(QtWidgets.QMainWindow):
             x_offset = str(self.ui.doubleSpinBox_x.value())
             y_offset = str(self.ui.doubleSpinBox_y.value())
             z_offset = str(self.ui.doubleSpinBox_z.value())
-            tool_offset = str(self.ui.doubleSpinBox_tool.value())
+            tool_x = str(self.ui.doubleSpinBox_toolx.value())
+            tool_y = str(self.ui.doubleSpinBox_tooly.value())
+            tool_z = str(self.ui.doubleSpinBox_toolz.value())
 
             msg = tsk_cmd+','+str(-yaw)+','+str(pitch)+','+str(roll) +\
-                ','+x_offset + ','+y_offset+','+z_offset+','+tool_offset+'\r\n'
+                ','+x_offset + ','+y_offset+','+z_offset + \
+                ','+tool_x+','+tool_y+','+tool_z+'\r\n'
 
             self.display_message(msg)
             self.cmd_socket.sendrecv(msg)
 
-            self.config['TOOL'] = self.ui.doubleSpinBox_tool.value()
+            self.config['TOOLX'] = self.ui.doubleSpinBox_toolx.value()
+            self.config['TOOLY'] = self.ui.doubleSpinBox_tooly.value()
+            self.config['TOOLZ'] = self.ui.doubleSpinBox_toolz.value()
             self.save_config()
 
     def x_slider(self, val):
@@ -587,11 +627,25 @@ class MyApp(QtWidgets.QMainWindow):
     def minrange_spinbox(self, val):
         self.ui.horizontalSlider_minrange.setValue(val)
 
-    def tool_slider(self, val):
-        self.ui.doubleSpinBox_tool.setValue(val)
+    def tool_slider_x(self, val):
+        self.ui.doubleSpinBox_toolx.setValue(val)
 
-    def tool_spinbox(self, val):
-        self.ui.horizontalSlider_tool.setValue(val)
+    def tool_spinbox_x(self, val):
+        self.ui.horizontalSlider_toolx.setValue(val)
+        self.ui.pushButton_set.setEnabled(True)
+
+    def tool_slider_y(self, val):
+        self.ui.doubleSpinBox_tooly.setValue(val)
+
+    def tool_spinbox_y(self, val):
+        self.ui.horizontalSlider_tooly.setValue(val)
+        self.ui.pushButton_set.setEnabled(True)
+
+    def tool_slider_z(self, val):
+        self.ui.doubleSpinBox_toolz.setValue(val)
+
+    def tool_spinbox_z(self, val):
+        self.ui.horizontalSlider_toolz.setValue(val)
         self.ui.pushButton_set.setEnabled(True)
 
     def az_dial(self, val):
@@ -622,14 +676,14 @@ class MyApp(QtWidgets.QMainWindow):
                 "background-color: grey; color: white;")
 
             self.ui.lineEdit_ip.setEnabled(False)
-            self.ui.lineEdit_ctrl_port.setEnabled(False)
-            self.ui.lineEdit_cmd_port.setEnabled(False)
+            self.ui.spinBox_ctrl_port.setEnabled(False)
+            self.ui.spinBox_cmd_port.setEnabled(False)
             self.ui.spinBox_speed.setEnabled(False)
 
             self.ctrl_thread = QThread()
             self.ctrl_socket = TCPClient(
                 self.ui.lineEdit_ip.text(),
-                int(self.ui.lineEdit_ctrl_port.text()))
+                self.ui.spinBox_ctrl_port.value())
 
             self.ctrl_socket.status.connect(self.on_ctrl_status_update)
             self.ctrl_socket.message.connect(self.on_tcp_client_message_ready)
@@ -663,8 +717,8 @@ class MyApp(QtWidgets.QMainWindow):
             self.ctrl_thread.quit()
 
             self.ui.lineEdit_ip.setEnabled(True)
-            self.ui.lineEdit_ctrl_port.setEnabled(True)
-            self.ui.lineEdit_cmd_port.setEnabled(True)
+            self.ui.spinBox_ctrl_port.setEnabled(True)
+            self.ui.spinBox_cmd_port.setEnabled(True)
             self.ui.spinBox_speed.setEnabled(True)
 
             self.ui.groupBox_ctrl.setEnabled(False)
@@ -678,7 +732,7 @@ class MyApp(QtWidgets.QMainWindow):
         self.cmd_thread = QThread()
         self.cmd_socket = TCPClient(
             self.ui.lineEdit_ip.text(),
-            int(self.ui.lineEdit_cmd_port.text()))
+            self.ui.spinBox_cmd_port.value())
 
         self.cmd_socket.status.connect(self.on_cmd_status_update)
         self.cmd_socket.message.connect(self.on_tcp_client_message_ready)
@@ -699,16 +753,16 @@ class MyApp(QtWidgets.QMainWindow):
             self.cmd_thread.quit()
 
             self.ui.lineEdit_ip.setEnabled(True)
-            self.ui.lineEdit_ctrl_port.setEnabled(True)
-            self.ui.lineEdit_cmd_port.setEnabled(True)
+            self.ui.spinBox_ctrl_port.setEnabled(True)
+            self.ui.spinBox_cmd_port.setEnabled(True)
             self.ui.spinBox_speed.setEnabled(True)
 
             self.ui.groupBox_ctrl.setEnabled(False)
 
         elif status == TCPClient.CONNECTED:
             self.config['IP'] = self.ui.lineEdit_ip.text()
-            self.config['CTRL_PORT'] = self.ui.lineEdit_ctrl_port.text()
-            self.config['CMD_PORT'] = self.ui.lineEdit_cmd_port.text()
+            self.config['CTRL_PORT'] = self.ui.spinBox_ctrl_port.value()
+            self.config['CMD_PORT'] = self.ui.spinBox_cmd_port.value()
             self.save_config()
 
             # self.ui.pushButton_init.setText('STOP')
@@ -728,8 +782,8 @@ class MyApp(QtWidgets.QMainWindow):
             success += self.ctrl_socket.sendrecv('1;1;SRVON')
             self.display_message('1;1;SLOTINIT')
             success += self.ctrl_socket.sendrecv('1;1;SLOTINIT')
-            self.display_message('1;1;RUNSIM2SOCKET;0')
-            success += self.ctrl_socket.sendrecv('1;1;RUNSIM2SOCKET;0')
+            self.display_message('1;1;RUNARMSTRONG;0')
+            success += self.ctrl_socket.sendrecv('1;1;RUNARMSTRONG;0')
             self.display_message('1;1;OVRD='+str(speed))
             success += self.ctrl_socket.sendrecv('1;1;OVRD='+str(speed))
 
@@ -768,8 +822,6 @@ class MyApp(QtWidgets.QMainWindow):
 
 if __name__ == "__main__":
     QtCore.QCoreApplication.setAttribute(QtCore.Qt.AA_ShareOpenGLContexts)
-    QtCore.QCoreApplication.setAttribute(QtCore.Qt.AA_EnableHighDpiScaling)
     app = QtWidgets.QApplication(sys.argv)
     window = MyApp()
-    # window.show()
     sys.exit(app.exec())
