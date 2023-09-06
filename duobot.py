@@ -15,15 +15,22 @@ AZ_CENTER_THOD = 0
 AZ_EDGE_THOD = 28
 EL_UP_THOD = 1
 
-AZ_MARGIN = 1.5
+AZ_MARGIN = 2
+
+_VERSION_ = 'v2.2'
+STATUS_STR = '<a href=\"https://hpc-gitlab.aptiv.com/zjx8rj/automation/-/tree/main/duobot_gui\">Source Code</a>' +\
+    '&nbsp;•&nbsp;' +\
+    '<a href=\"https://hpc-gitlab.aptiv.com/zjx8rj/automation/-/issues\">Report a Bug</a>' +\
+    '&nbsp;•&nbsp;' +\
+    '<a href=\"https://hpc-gitlab.aptiv.com/zjx8rj/automation/-/tree/main/duobot_matlab\">MATLAB API</a>' +\
+    '&nbsp;•&nbsp;' +\
+    '<a href=\"https://hpc-gitlab.aptiv.com/zjx8rj/automation/-/tree/main/#duobot\">CANape lib</a>'
 
 
 class MyApp(QtWidgets.QMainWindow):
 
     def __init__(self):
         super(MyApp, self).__init__()
-
-        self.version = 'v2.1'
 
         self.az_l = 0
         self.el_l = 0
@@ -95,17 +102,15 @@ class MyApp(QtWidgets.QMainWindow):
     def init_ui(self):
         self.ui.pushButton_start.setStyleSheet(
             "background-color: green; color: white;")
-        self.ui.groupBox.setStyleSheet("background-color: #FFF9C4;")
-        self.ui.groupBox_2.setStyleSheet("background-color: #FFF9C4;")
-        self.ui.groupBox_3.setStyleSheet("background-color: #FFF9C4;")
-        self.ui.groupBox_5.setStyleSheet("background-color: #FFF9C4;")
-        self.ui.groupBox_7.setStyleSheet("background-color: #FFF9C4;")
-        self.ui.groupBox_8.setStyleSheet("background-color: #FFF9C4;")
+        self.ui.groupBox.setStyleSheet("background-color: #B3E5FC;")
+        self.ui.groupBox_2.setStyleSheet("background-color: #B3E5FC;")
+        self.ui.groupBox_3.setStyleSheet("background-color: #B3E5FC;")
+        self.ui.groupBox_5.setStyleSheet("background-color: #DCEDC8;")
+        self.ui.groupBox_7.setStyleSheet("background-color: #DCEDC8;")
+        self.ui.groupBox_8.setStyleSheet("background-color: #DCEDC8;")
 
         self.ui.groupBox_r.setEnabled(False)
         self.ui.groupBox_l.setEnabled(False)
-
-        self.ui.statusbar.showMessage(self.version)
 
         # TCP Client
         self.config['IP_RIGHT'] = self.config.get('IP_RIGHT', '192.168.0.32')
@@ -133,6 +138,12 @@ class MyApp(QtWidgets.QMainWindow):
         self.ui.doubleSpinBox_ctrl_l.setValue(self.config['CTRL_PORT_LEFT'])
         self.ui.doubleSpinBox_cmd_l.setValue(self.config['CMD_PORT_LEFT'])
         self.ui.doubleSpinBox_speed_l.setValue(self.config['SPEED_LEFT'])
+
+        status_label = QtWidgets.QLabel('&nbsp;'+_VERSION_ + ' • '+STATUS_STR)
+        status_label.setTextFormat(QtCore.Qt.RichText)
+        status_label.setTextInteractionFlags(QtCore.Qt.TextBrowserInteraction)
+        status_label.setOpenExternalLinks(True)
+        self.ui.statusBar().addWidget(status_label)
 
         if self.dev_mode:
             self.ui.pushButton_connect_l.setVisible(True)

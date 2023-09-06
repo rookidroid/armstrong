@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>877</width>
-    <height>513</height>
+    <width>813</width>
+    <height>470</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -484,18 +484,40 @@
                 <item>
                  <widget class="QGroupBox" name="groupBox_4">
                   <property name="title">
-                   <string/>
+                   <string>Polar</string>
                   </property>
                   <property name="alignment">
                    <set>Qt::AlignCenter</set>
                   </property>
+                  <property name="flat">
+                   <bool>false</bool>
+                  </property>
                   <layout class="QVBoxLayout" name="verticalLayout_7">
                    <item>
+                    <spacer name="verticalSpacer_17">
+                     <property name="orientation">
+                      <enum>Qt::Vertical</enum>
+                     </property>
+                     <property name="sizeHint" stdset="0">
+                      <size>
+                       <width>20</width>
+                       <height>0</height>
+                      </size>
+                     </property>
+                    </spacer>
+                   </item>
+                   <item>
                     <widget class="QDial" name="dial_pol_l">
+                     <property name="sizePolicy">
+                      <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                       <horstretch>0</horstretch>
+                       <verstretch>0</verstretch>
+                      </sizepolicy>
+                     </property>
                      <property name="minimumSize">
                       <size>
-                       <width>80</width>
-                       <height>80</height>
+                       <width>40</width>
+                       <height>40</height>
                       </size>
                      </property>
                      <property name="minimum">
@@ -539,7 +561,7 @@
                         <enum>QAbstractSpinBox::CorrectToNearestValue</enum>
                        </property>
                        <property name="prefix">
-                        <string>Polar: </string>
+                        <string/>
                        </property>
                        <property name="suffix">
                         <string>°</string>
@@ -572,6 +594,19 @@
                       </spacer>
                      </item>
                     </layout>
+                   </item>
+                   <item>
+                    <spacer name="verticalSpacer_18">
+                     <property name="orientation">
+                      <enum>Qt::Vertical</enum>
+                     </property>
+                     <property name="sizeHint" stdset="0">
+                      <size>
+                       <width>20</width>
+                       <height>0</height>
+                      </size>
+                     </property>
+                    </spacer>
                    </item>
                   </layout>
                  </widget>
@@ -789,6 +824,12 @@
              <verstretch>1</verstretch>
             </sizepolicy>
            </property>
+           <property name="minimumSize">
+            <size>
+             <width>0</width>
+             <height>40</height>
+            </size>
+           </property>
           </widget>
          </item>
         </layout>
@@ -809,7 +850,7 @@
         <property name="sizeHint" stdset="0">
          <size>
           <width>20</width>
-          <height>20</height>
+          <height>10</height>
          </size>
         </property>
        </spacer>
@@ -825,7 +866,7 @@
         <property name="minimumSize">
          <size>
           <width>0</width>
-          <height>60</height>
+          <height>40</height>
          </size>
         </property>
         <property name="font">
@@ -840,6 +881,29 @@
       </item>
       <item>
        <spacer name="verticalSpacer_5">
+        <property name="orientation">
+         <enum>Qt::Vertical</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>20</width>
+          <height>40</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item>
+       <widget class="QLabel" name="label_2">
+        <property name="text">
+         <string>Min Sep: 2°</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <spacer name="verticalSpacer_21">
         <property name="orientation">
          <enum>Qt::Vertical</enum>
         </property>
@@ -1333,18 +1397,40 @@
                 <item>
                  <widget class="QGroupBox" name="groupBox_6">
                   <property name="title">
-                   <string/>
+                   <string>Polar</string>
                   </property>
                   <property name="alignment">
                    <set>Qt::AlignCenter</set>
                   </property>
+                  <property name="flat">
+                   <bool>false</bool>
+                  </property>
                   <layout class="QVBoxLayout" name="verticalLayout_10">
                    <item>
+                    <spacer name="verticalSpacer_19">
+                     <property name="orientation">
+                      <enum>Qt::Vertical</enum>
+                     </property>
+                     <property name="sizeHint" stdset="0">
+                      <size>
+                       <width>20</width>
+                       <height>0</height>
+                      </size>
+                     </property>
+                    </spacer>
+                   </item>
+                   <item>
                     <widget class="QDial" name="dial_pol_r">
+                     <property name="sizePolicy">
+                      <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                       <horstretch>0</horstretch>
+                       <verstretch>0</verstretch>
+                      </sizepolicy>
+                     </property>
                      <property name="minimumSize">
                       <size>
-                       <width>80</width>
-                       <height>80</height>
+                       <width>40</width>
+                       <height>40</height>
                       </size>
                      </property>
                      <property name="minimum">
@@ -1391,7 +1477,7 @@
                         <enum>QAbstractSpinBox::CorrectToNearestValue</enum>
                        </property>
                        <property name="prefix">
-                        <string>Polar: </string>
+                        <string/>
                        </property>
                        <property name="suffix">
                         <string>°</string>
@@ -1424,6 +1510,19 @@
                       </spacer>
                      </item>
                     </layout>
+                   </item>
+                   <item>
+                    <spacer name="verticalSpacer_20">
+                     <property name="orientation">
+                      <enum>Qt::Vertical</enum>
+                     </property>
+                     <property name="sizeHint" stdset="0">
+                      <size>
+                       <width>20</width>
+                       <height>0</height>
+                      </size>
+                     </property>
+                    </spacer>
                    </item>
                   </layout>
                  </widget>
@@ -1638,6 +1737,12 @@
              <verstretch>1</verstretch>
             </sizepolicy>
            </property>
+           <property name="minimumSize">
+            <size>
+             <width>0</width>
+             <height>40</height>
+            </size>
+           </property>
           </widget>
          </item>
         </layout>
@@ -1652,7 +1757,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>877</width>
+     <width>813</width>
      <height>22</height>
     </rect>
    </property>
