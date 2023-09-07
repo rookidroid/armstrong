@@ -44,8 +44,7 @@ class TCPClient(QObject):
                         pass
                     else:
                         if data:
-                            self.message.emit(
-                                data.decode())
+                            self.message.emit(data.decode())
                         else:
                             break
                 elif self.signal == self.SIG_DISCONNECT:
@@ -54,7 +53,7 @@ class TCPClient(QObject):
                     # self.status.emit(self.STOP, '')
                     break
         finally:
-            self.status.emit(self.STOP, '')
+            self.status.emit(self.STOP, "")
 
     def send(self, msg):
         self.tcp_socket.sendall(msg.encode())
@@ -67,8 +66,7 @@ class TCPClient(QObject):
             return -1
         else:
             if data:
-                self.message.emit(
-                    data.decode())
+                self.message.emit(data.decode())
                 return 0
             else:
                 return -1
