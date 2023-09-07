@@ -36,9 +36,14 @@ class TCPClient(QObject):
             self.tcp_socket.connect((self.ip, self.port))
         except OSError as err:
             # print(err)
-            self.sig_error.emit('Unable to establish a connection with ' +
-                                self.ip+':'+str(self.port) + '. ' +
-                                str(err))
+            self.sig_error.emit(
+                "Unable to establish a connection with "
+                + self.ip
+                + ":"
+                + str(self.port)
+                + ". "
+                + str(err)
+            )
             # self.sig_status.emit(self.STOP, '')
         else:
             # print('connected')
@@ -56,8 +61,7 @@ class TCPClient(QObject):
                         pass
                     else:
                         if data:
-                            self.sig_message.emit(
-                                data.decode())
+                            self.sig_message.emit(data.decode())
                             self.received = True
                             # self.state = self.STATE_IDLE
                         else:
@@ -68,7 +72,7 @@ class TCPClient(QObject):
                     # self.sig_status.emit(self.STOP, '')
                     break
         finally:
-            self.sig_status.emit(self.STOP, '')
+            self.sig_status.emit(self.STOP, "")
 
     def send(self, msg):
         # self.state = self.STATE_RECEIVING
@@ -86,5 +90,5 @@ class TCPClient(QObject):
 
     def close(self):
         self.state = self.STATE_DISCONNECT
-        self.sig_status.emit(self.STOP, '')
+        self.sig_status.emit(self.STOP, "")
         self.tcp_socket.close()

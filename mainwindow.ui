@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>813</width>
-    <height>470</height>
+    <height>523</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -34,6 +34,9 @@
           <layout class="QHBoxLayout" name="horizontalLayout_2">
            <item>
             <widget class="QLineEdit" name="lineEdit_ip_l">
+             <property name="toolTip">
+              <string>IP address of the left-bot. Default is 192.168.0.33</string>
+             </property>
              <property name="placeholderText">
               <string>IP address</string>
              </property>
@@ -41,6 +44,9 @@
            </item>
            <item>
             <widget class="QDoubleSpinBox" name="doubleSpinBox_ctrl_l">
+             <property name="toolTip">
+              <string>Control port. Default is 10002</string>
+             </property>
              <property name="buttonSymbols">
               <enum>QAbstractSpinBox::NoButtons</enum>
              </property>
@@ -57,6 +63,9 @@
            </item>
            <item>
             <widget class="QDoubleSpinBox" name="doubleSpinBox_cmd_l">
+             <property name="toolTip">
+              <string>Command port. Default is 10003</string>
+             </property>
              <property name="buttonSymbols">
               <enum>QAbstractSpinBox::NoButtons</enum>
              </property>
@@ -935,6 +944,9 @@
           <layout class="QHBoxLayout" name="horizontalLayout_10">
            <item>
             <widget class="QLineEdit" name="lineEdit_ip_r">
+             <property name="toolTip">
+              <string>IP address of the right-bot. Default is 192.168.0.32</string>
+             </property>
              <property name="placeholderText">
               <string>IP address</string>
              </property>
@@ -942,6 +954,9 @@
            </item>
            <item>
             <widget class="QDoubleSpinBox" name="doubleSpinBox_ctrl_r">
+             <property name="toolTip">
+              <string>Control port. Default is 10002</string>
+             </property>
              <property name="frame">
               <bool>true</bool>
              </property>
@@ -961,6 +976,9 @@
            </item>
            <item>
             <widget class="QDoubleSpinBox" name="doubleSpinBox_cmd_r">
+             <property name="toolTip">
+              <string>Command port. Default is 10003</string>
+             </property>
              <property name="buttonSymbols">
               <enum>QAbstractSpinBox::NoButtons</enum>
              </property>
