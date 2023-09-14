@@ -18,11 +18,11 @@ from util import html_received_msg, html_sent_msg, html_err_msg
 
 AZ_CENTER_THOD = 0
 AZ_EDGE_THOD = 28
-EL_UP_THOD = 1
+EL_UP_THOD = 0.5
 
 AZ_MARGIN = 2
 
-_VERSION_ = "v2.3"
+_VERSION_ = "v3.0"
 STATUS_STR = (
     '<a href="https://hpc-gitlab.aptiv.com/zjx8rj/automation/-/tree/main/duobot_gui">Source Code</a>'
     + "&nbsp;•&nbsp;"
