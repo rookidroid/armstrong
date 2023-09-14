@@ -10,7 +10,7 @@ import json
 
 from tcpclient import TCPClient
 
-_VERSION_ = "v3.1"
+_VERSION_ = "v3.2"
 STATUS_STR = (
     '<a href="https://hpc-gitlab.aptiv.com/zjx8rj/automation/-/tree/main/armstrong_gui">Source Code</a>'
     + "&nbsp;•&nbsp;"
@@ -157,19 +157,21 @@ class MyApp(QtWidgets.QMainWindow):
 
         self.save_config()
 
-        self.ui.groupBox_ctrl.setStyleSheet(":enabled { background-color: white;} :disabled {background-color: #EEEEEE}")
+        self.ui.groupBox_ctrl.setStyleSheet(
+            ":enabled { background-color: white;} :disabled {background-color: #EEEEEE}"
+        )
 
         self.ui.pushButton_load.setStyleSheet(
-            ":enabled { background-color: #81D4FA;} :disabled {background-color: #E0E0E0}"
+            ":enabled { background-color: #E0F2F1;} :disabled {background-color: #E0E0E0}"
         )
         self.ui.pushButton_home.setStyleSheet(
-            ":enabled { background-color: #81D4FA;} :disabled {background-color: #E0E0E0}"
+            ":enabled { background-color: #E0F2F1;} :disabled {background-color: #E0E0E0}"
         )
         self.ui.pushButton_minrange.setStyleSheet(
-            ":enabled { background-color: #81D4FA;} :disabled {background-color: #E0E0E0}"
+            ":enabled { background-color: #E0F2F1;} :disabled {background-color: #E0E0E0}"
         )
         self.ui.pushButton_set.setStyleSheet(
-            ":enabled { background-color: #81D4FA;} :disabled {background-color: #E0E0E0}"
+            ":enabled { background-color: #E0F2F1;} :disabled {background-color: #E0E0E0}"
         )
 
     def save_config(self):
