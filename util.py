@@ -1,5 +1,5 @@
 import json
-# import time
+import time
 
 
 def start_leftbot_sequence(msg_obj, ctrl_obj):
@@ -35,7 +35,7 @@ def start_leftbot_sequence(msg_obj, ctrl_obj):
     if ctrl_obj.send_wait("1;1;RUNLEFTROBOT;0"):
         return 1
     
-    # time.sleep(1)
+    time.sleep(1)
 
     return 0
 
@@ -73,7 +73,7 @@ def start_rightbot_sequence(msg_obj, ctrl_obj):
     if ctrl_obj.send_wait("1;1;RUNRIGHTROBOT;0"):
         return 1
     
-    # time.sleep(1)
+    time.sleep(1)
 
     return 0
 

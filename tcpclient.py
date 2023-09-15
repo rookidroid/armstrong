@@ -1,6 +1,6 @@
 from PySide6.QtCore import QObject, Signal, Slot
-import socket
 import time
+import socket
 
 
 class TCPClient(QObject):
@@ -26,7 +26,7 @@ class TCPClient(QObject):
         self.tcp_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.tcp_socket.settimeout(180)
 
-        self.state = self.STATE_RECEIVING
+        self.state = self.STATE_IDLE
 
         self.received = False
 
@@ -56,14 +56,13 @@ class TCPClient(QObject):
                     # time.sleep(1)
                     try:
                         data = self.tcp_socket.recv(4096)
-                    except socket.timeout as t_out:
+                    except socket.timeout:
                         self.state = self.STATE_IDLE
-                        pass
                     else:
                         if data:
                             self.sig_message.emit(data.decode())
                             self.received = True
-                            # self.state = self.STATE_IDLE
+                            self.state = self.STATE_IDLE
                         else:
                             break
                 elif self.state == self.STATE_DISCONNECT:
@@ -75,13 +74,23 @@ class TCPClient(QObject):
             self.sig_status.emit(self.STOP, "")
 
     def send(self, msg):
-        # self.state = self.STATE_RECEIVING
+        self.state = self.STATE_RECEIVING
         self.tcp_socket.sendall(msg.encode())
 
     def send_wait(self, msg):
         self.received = False
-        # self.state = self.STATE_RECEIVING
+        self.state = self.STATE_RECEIVING
         self.tcp_socket.sendall(msg.encode())
+        # try:
+        #     data = self.tcp_socket.recv(4096)
+        # except socket.timeout as t_out:
+        #     return 1
+        # else:
+        #     if data:
+        #         self.sig_message.emit(data.decode())
+        #         return 0
+        #     else:
+        #         return 1
         for idx in range(0, 600):
             if self.received:
                 return 0
