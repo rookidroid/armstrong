@@ -28,6 +28,7 @@ jobs:
       run: |
         pyinstaller duobot.spec
         cp mainwindow.ui ./dist/duobot/
+        cp config.json ./dist/duobot/
     - name: Archive built module
       uses: actions/upload-artifact@v3
       if: success()

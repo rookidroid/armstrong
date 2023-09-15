@@ -22,7 +22,7 @@ EL_UP_THOD = 0.5
 
 AZ_MARGIN = 2
 
-_VERSION_ = "v3.0"
+_VERSION_ = "v3.1"
 STATUS_STR = (
     '<a href="https://hpc-gitlab.aptiv.com/zjx8rj/automation/-/tree/main/duobot_gui">Source Code</a>'
     + "&nbsp;•&nbsp;"
