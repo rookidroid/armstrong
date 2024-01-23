@@ -1,24 +1,34 @@
+# pylint: disable=too-many-lines
+"""
+This module provides an app named "ArmStrong" that controls the motion of a robot arm.
+
+The app uses Python to communicate with the robot arm and send commands to it.
+The app is designed to be easy to use and can be customized to suit different needs.
+
+By: Zhengyu Peng <zhengyu.peng@aptiv.com>
+
+"""
+
 import sys
 import math
-from PySide6 import QtWidgets, QtCore, QtGui
-from PySide6.QtCore import Qt
-from PySide6.QtCore import QThread, QFile
-from PySide6.QtUiTools import QUiLoader
-
 from pathlib import Path
 import json
+
+from PySide6 import QtWidgets, QtCore
+from PySide6.QtCore import QThread, QFile
+from PySide6.QtUiTools import QUiLoader
 
 from tcpclient import TCPClient
 
 _VERSION_ = "v3.2"
 STATUS_STR = (
-    '<a href="https://hpc-gitlab.aptiv.com/zjx8rj/automation/-/tree/main/armstrong_gui">Source Code</a>'
+    '<a href="https://hpc-gitlab.aptiv.com/zjx8rj/automation#armstrong">New Release</a>'  # pylint: disable=line-too-long
     + "&nbsp;•&nbsp;"
     + '<a href="https://hpc-gitlab.aptiv.com/zjx8rj/automation/-/issues">Issue Tracker</a>'
     + "&nbsp;•&nbsp;"
-    + '<a href="https://hpc-gitlab.aptiv.com/zjx8rj/automation/-/tree/main/armstrong_matlab">MATLAB API</a>'
+    + '<a href="https://hpc-gitlab.aptiv.com/zjx8rj/automation/-/tree/main/armstrong_matlab">MATLAB API</a>'  # pylint: disable=line-too-long
     + "&nbsp;•&nbsp;"
-    + '<a href="https://hpc-gitlab.aptiv.com/zjx8rj/automation/-/tree/main/#armstrong">CANape Lib</a>'
+    + '<a href="https://hpc-gitlab.aptiv.com/zjx8rj/automation/-/tree/main/#armstrong">CANape Lib</a>'  # pylint: disable=line-too-long
 )
 
 PI = 3.14159265359
@@ -51,18 +61,34 @@ ELEVATION_MIN = -90
 ELEVATION_MAX = 90
 
 
-class MyApp(QtWidgets.QMainWindow):
+class MyApp(QtWidgets.QMainWindow):  # pylint: disable=too-many-public-methods
+    """
+    The ArmStrong GUI for robot arm control
+    """
+
     def __init__(self):
-        super(MyApp, self).__init__()
+        """
+        Initializes the MyApp class.
+
+        :return: None
+        """
+        super().__init__()
 
         config_file = Path("config.json")
         if config_file.exists():
-            self.config = json.load(open("config.json", "r"))
+            with open("config.json", "r", encoding="utf-8") as read_file:
+                self.config = json.load(read_file)
         else:
-            self.config = dict()
-            json.dump(self.config, open("config.json", "w+"))
+            self.config = {}
+            with open("config.json", "w+", encoding="utf-8") as write_file:
+                json.dump(self.config, write_file)
 
-        """Load UI"""
+        self.ctrl_thread = None
+        self.ctrl_socket = None
+        self.cmd_thread = None
+        self.cmd_socket = None
+
+        # Load UI
         ui_file_name = "mainwindow.ui"
         ui_file = QFile(ui_file_name)
         loader = QUiLoader()
@@ -113,6 +139,11 @@ class MyApp(QtWidgets.QMainWindow):
         self.ui.show()
 
     def init_ui(self):
+        """
+        Initializes the user interface of the MyApp class.
+
+        :return: None
+        """
         self.ui.pushButton_ctrl.setStyleSheet("background-color: green; color: white;")
         self.ui.groupBox_ctrl.setEnabled(False)
 
@@ -175,12 +206,25 @@ class MyApp(QtWidgets.QMainWindow):
         )
 
     def save_config(self):
+        """
+        Saves the configuration settings to a JSON file.
+
+        :return: None
+        """
         try:
-            json.dump(self.config, open("config.json", "w+"))
-        except PermissionError as err:
+            with open("config.json", "w+", encoding="utf-8") as write_file:
+                json.dump(self.config, write_file)
+        except PermissionError:
             pass
 
     def coordinate_changed(self, idx):
+        """
+        Updates the UI based on the selected coordinate system.
+
+        :param idx: The index of the selected coordinate system.
+        :type idx: int
+        :return: None
+        """
         self.config["COORDINATE"] = self.ui.comboBox_coord.currentIndex()
         self.save_config()
 
@@ -320,6 +364,18 @@ class MyApp(QtWidgets.QMainWindow):
         self.ui.pushButton_set.setEnabled(True)
 
     def doa_backmount_yawpitch(self, theta_h, theta_v, roll_offset):
+        """
+        Calculates the yaw, pitch, and roll angles for a backmount radar system using yaw and pitch.
+
+        :param theta_h: The horizontal angle in degrees.
+        :type theta_h: float
+        :param theta_v: The vertical angle in degrees.
+        :type theta_v: float
+        :param roll_offset: The roll offset in degrees.
+        :type roll_offset: float
+        :return: A tuple containing the yaw, pitch, roll, and error message (if any).
+        :rtype: tuple
+        """
         theta_h_rad = theta_h / 180.0 * PI
         theta_v_rad = theta_v / 180.0 * PI
 
@@ -340,6 +396,18 @@ class MyApp(QtWidgets.QMainWindow):
         return yaw, pitch, roll, err
 
     def doa_backmount_yawroll(self, theta_h, theta_v, roll_offset):
+        """
+        Calculates the yaw, pitch, and roll angles for a backmount radar system using yaw and roll.
+
+        :param theta_h: The horizontal angle in degrees.
+        :type theta_h: float
+        :param theta_v: The vertical angle in degrees.
+        :type theta_v: float
+        :param roll_offset: The roll offset in degrees.
+        :type roll_offset: float
+        :return: A tuple containing the yaw, pitch, roll, and error message (if any).
+        :rtype: tuple
+        """
         theta_h_rad = theta_h / 180.0 * PI
         theta_v_rad = theta_v / 180.0 * PI
 
@@ -383,6 +451,18 @@ class MyApp(QtWidgets.QMainWindow):
         return yaw, pitch, roll, err
 
     def doa_topmount_yawroll(self, theta_h, theta_v, roll_offset):
+        """
+        Calculates the yaw, pitch, and roll angles for a topmount radar system using yaw and roll.
+
+        :param theta_h: The horizontal angle in degrees.
+        :type theta_h: float
+        :param theta_v: The vertical angle in degrees.
+        :type theta_v: float
+        :param roll_offset: The roll offset in degrees.
+        :type roll_offset: float
+        :return: A tuple containing the yaw, pitch, roll, and error message (if any).
+        :rtype: tuple
+        """
         theta_h_rad = theta_h / 180.0 * PI
         theta_v_rad = theta_v / 180.0 * PI
 
@@ -407,6 +487,18 @@ class MyApp(QtWidgets.QMainWindow):
         return yaw, pitch, roll, err
 
     def det_backmount_yawpitch(self, azimuth, elevation, roll_offset):
+        """
+        Calculates the yaw, pitch, and roll angles for a backmount radar system using yaw and pitch.
+
+        :param azimuth: The azimuth angle in degrees.
+        :type azimuth: float
+        :param elevation: The elevation angle in degrees.
+        :type elevation: float
+        :param roll_offset: The roll offset in degrees.
+        :type roll_offset: float
+        :return: A tuple containing the yaw, pitch, roll, and error message (if any).
+        :rtype: tuple
+        """
         az_rad = azimuth / 180.0 * PI
         el_rad = elevation / 180.0 * PI
         err = ""
@@ -430,6 +522,24 @@ class MyApp(QtWidgets.QMainWindow):
         return yaw, pitch, roll, err
 
     def det_backmount_yawroll(self, azimuth, elevation, roll_offset):
+        """
+        Calculate yaw, pitch, and roll angles for a backmount device.
+
+        :param float azimuth: Azimuth angle in degrees.
+        :param float elevation: Elevation angle in degrees.
+        :param float roll_offset: Roll offset angle in degrees.
+
+        :return: Tuple[float, float, float, str]
+            A tuple containing the calculated yaw, pitch, roll angles, and an error message.
+
+        The function calculates the yaw, pitch, and roll angles based on the provided azimuth,
+        elevation, and roll_offset. The result is returned as a tuple, and any errors
+        encountered during the calculation are included in the 'err' field of the tuple.
+
+        Note:
+        - Azimuth and elevation are expected in degrees.
+        - The angles are returned in degrees.
+        """
         az_rad = azimuth / 180.0 * PI
         el_rad = elevation / 180.0 * PI
         err = ""
@@ -461,6 +571,25 @@ class MyApp(QtWidgets.QMainWindow):
         return yaw, pitch, roll, err
 
     def det_topmount_yawroll(self, azimuth, elevation, roll_offset):
+        """
+        Calculate yaw, pitch, and roll angles for a topmount device.
+
+        :param float azimuth: Azimuth angle in degrees.
+        :param float elevation: Elevation angle in degrees.
+        :param float roll_offset: Roll offset angle in degrees.
+
+        :return: Tuple[float, float, float, str]
+            A tuple containing the calculated yaw, pitch, roll angles, and an error message.
+
+        The function calculates the yaw, pitch, and roll angles based on the provided azimuth,
+        elevation, and roll_offset for a topmount device. The result is returned as a tuple,
+        and any errors encountered during the calculation are included in the 'err' field
+        of the tuple.
+
+        Note:
+        - Azimuth and elevation are expected in degrees.
+        - The angles are returned in degrees.
+        """
         err = ""
         yaw = -elevation + 90.0
         pitch = 0.0
@@ -469,6 +598,27 @@ class MyApp(QtWidgets.QMainWindow):
         return yaw, pitch, roll, err
 
     def on_load_button_clicked(self):
+        """
+        Handle the event when the load button is clicked.
+
+        This method prepares a task command and associated parameters, constructs a message,
+        displays the message, sends it via the command socket, and enables a specific UI button.
+
+        :return: None
+
+        The method performs the following steps:
+        1. Set task command (`tsk_cmd`) to "2.0".
+        2. Set azimuth (`azi`), elevation (`ele`), roll (`rol`), and offsets to "0.0".
+        3. Construct a message (`msg`) by concatenating the parameters with commas.
+        4. Display the message using the `display_message` method.
+        5. Send and receive the message via the command socket (`cmd_socket`).
+        6. Enable a specific UI button (`pushButton_set`).
+
+        Note:
+        - Parameters are represented as strings ("0.0").
+        - The message format is "<tsk_cmd>,<azi>,<ele>,<rol>,<x_offset>,<y_offset>,
+        <z_offset>,<tool_x>,<tool_y>,<tool_z>\r\n".
+        """
         tsk_cmd = str(2.0)
         azi = "0.0"
         ele = "0.0"
@@ -508,6 +658,31 @@ class MyApp(QtWidgets.QMainWindow):
         self.ui.pushButton_set.setEnabled(True)
 
     def on_home_button_clicked(self):
+        """
+        Handle the event when the home button is clicked.
+
+        This method saves the current configuration of tool coordinates, updates the task command
+        and associated parameters, constructs a message, displays the message, sends it via the
+        command socket, and enables a specific UI button.
+
+        :return: None
+
+        The method performs the following steps:
+        1. Save the current tool coordinates to the configuration (`config`)
+        using doubleSpinBox values.
+        2. Set task command (`tsk_cmd`) to "1.0".
+        3. Set azimuth (`azi`), elevation (`ele`), roll (`rol`), and offsets to "0.0".
+        4. Retrieve tool coordinates from the configuration for the Z-axis (`tool_z`).
+        5. Construct a message (`msg`) by concatenating the parameters with commas.
+        6. Display the message using the `display_message` method.
+        7. Send and receive the message via the command socket (`cmd_socket`).
+        8. Enable a specific UI button (`pushButton_set`).
+
+        Note:
+        - Parameters are represented as strings ("0.0").
+        - The message format is "<tsk_cmd>,<azi>,<ele>,<rol>,<x_offset>,<y_offset>,
+        <z_offset>,<tool_x>,<tool_y>,<tool_z>\r\n".
+        """
         self.config["TOOLX"] = self.ui.doubleSpinBox_toolx.value()
         self.config["TOOLY"] = self.ui.doubleSpinBox_tooly.value()
         self.config["TOOLZ"] = self.ui.doubleSpinBox_toolz.value()
@@ -554,6 +729,31 @@ class MyApp(QtWidgets.QMainWindow):
         # self.ui.spinBox_cmd_port.setEnabled(False)
 
     def on_minrange_button_clicked(self):
+        """
+        Handle the event when the minrange button is clicked.
+
+        This method updates the task command and associated parameters for setting minimum range,
+        constructs a message, displays the message, sends it via the command socket, and enables
+        a specific UI button.
+
+        :return: None
+
+        The method performs the following steps:
+        1. Set task command (`tsk_cmd`) to "5.0".
+        2. Set azimuth (`azi`) and roll (`rol`) to "0.0".
+        3. Retrieve elevation value from the spinBox (`spinBox_minrange`) for the
+        elevation parameter (`ele`).
+        4. Set offsets and tool coordinates to "0.0".
+        5. Construct a message (`msg`) by concatenating the parameters with commas.
+        6. Display the message using the `display_message` method.
+        7. Send and receive the message via the command socket (`cmd_socket`).
+        8. Enable a specific UI button (`pushButton_set`).
+
+        Note:
+        - Parameters are represented as strings ("0.0").
+        - The message format is "<tsk_cmd>,<azi>,<ele>,<rol>,<x_offset>,<y_offset>,
+        <z_offset>,<tool_x>,<tool_y>,<tool_z>\r\n".
+        """
         tsk_cmd = str(5.0)
         azi = "0.0"
         ele = str(self.ui.spinBox_minrange.value())
@@ -593,6 +793,35 @@ class MyApp(QtWidgets.QMainWindow):
         self.ui.pushButton_set.setEnabled(True)
 
     def on_set_button_clicked(self):
+        """
+        Handle the event when the set button is clicked.
+
+        This method sets the robot position based on the selected coordinate system and angles.
+        It constructs a message, displays the message, sends it via the command socket, and updates
+        the configuration with the current tool coordinates.
+
+        :return: None
+
+        The method performs the following steps:
+        1. Disable the set button (`pushButton_set`).
+        2. Set task command (`tsk_cmd`) to "3.0".
+        3. Retrieve angles from UI doubleSpinBox elements (`doubleSpinBox_az`,
+        `doubleSpinBox_el`, `doubleSpinBox_roll`).
+        4. Determine the coordinate system based on the selected index in comboBox_coord.
+        5. Calculate yaw, pitch, and roll based on the selected coordinate system using
+        specific methods.
+        6. Display an error message if any calculation error occurs.
+        7. Check if the calculated angles are within the specified range.
+        8. If angles are within the range, construct a message (`msg`) and display it.
+        9. Send and receive the message via the command socket (`cmd_socket`).
+        10. Update the configuration with the current tool coordinates.
+        11. Enable the set button (`pushButton_set`).
+
+        Note:
+        - Parameters and angles are represented as strings.
+        - The message format is "<tsk_cmd>,<yaw>,<pitch>,<roll>,<x_offset>,<y_offset>,
+        <z_offset>,<tool_x>,<tool_y>,<tool_z>\r\n".
+        """
         self.ui.pushButton_set.setEnabled(False)
         tsk_cmd = str(3.0)
         angle1 = self.ui.doubleSpinBox_az.value()
@@ -679,75 +908,320 @@ class MyApp(QtWidgets.QMainWindow):
             self.save_config()
 
     def x_slider(self, val):
+        """
+        Update the value of the x-coordinate based on the slider position.
+
+        :param float val: The slider position representing the x-coordinate.
+
+        :return: None
+
+        The method sets the value of the x-coordinate in the associated
+        doubleSpinBox (`doubleSpinBox_x`)
+        based on the provided slider position.
+        """
         self.ui.doubleSpinBox_x.setValue(val)
 
     def x_spinbox(self, val):
+        """
+        Update the value of the x-coordinate based on the spinbox input.
+
+        :param float val: The input value representing the x-coordinate.
+
+        :return: None
+
+        The method sets the value of the x-coordinate in the associated
+        horizontalSlider (`horizontalSlider_x`)
+        based on the provided input value and enables the set button (`pushButton_set`).
+        """
         self.ui.horizontalSlider_x.setValue(val)
         self.ui.pushButton_set.setEnabled(True)
 
     def y_slider(self, val):
+        """
+        Update the value of the y-coordinate based on the slider position.
+
+        :param float val: The slider position representing the y-coordinate.
+
+        :return: None
+
+        The method sets the value of the y-coordinate in the associated
+        doubleSpinBox (`doubleSpinBox_y`)
+        based on the provided slider position.
+        """
         self.ui.doubleSpinBox_y.setValue(val)
 
     def y_spinbox(self, val):
+        """
+        Update the value of the y-coordinate based on the spinbox input.
+
+        :param float val: The input value representing the y-coordinate.
+
+        :return: None
+
+        The method sets the value of the y-coordinate in the associated
+        horizontalSlider (`horizontalSlider_y`)
+        based on the provided input value and enables the set button (`pushButton_set`).
+        """
         self.ui.horizontalSlider_y.setValue(val)
         self.ui.pushButton_set.setEnabled(True)
 
     def z_slider(self, val):
+        """
+        Update the value of the z-coordinate based on the slider position.
+
+        :param float val: The slider position representing the z-coordinate.
+
+        :return: None
+
+        The method sets the value of the z-coordinate in the associated
+        doubleSpinBox (`doubleSpinBox_z`)
+        based on the provided slider position.
+        """
         self.ui.doubleSpinBox_z.setValue(val)
 
     def z_spinbox(self, val):
+        """
+        Update the value of the z-coordinate based on the spinbox input.
+
+        :param float val: The input value representing the z-coordinate.
+
+        :return: None
+
+        The method sets the value of the z-coordinate in the associated
+        horizontalSlider (`horizontalSlider_z`)
+        based on the provided input value and enables the set button (`pushButton_set`).
+        """
         self.ui.horizontalSlider_z.setValue(val)
         self.ui.pushButton_set.setEnabled(True)
 
     def minrange_slider(self, val):
+        """
+        Update the value of the minimum range based on the slider position.
+
+        :param float val: The slider position representing the minimum range.
+
+        :return: None
+
+        The method sets the value of the minimum range in the associated
+        spinBox (`spinBox_minrange`)
+        based on the provided slider position.
+        """
         self.ui.spinBox_minrange.setValue(val)
 
     def minrange_spinbox(self, val):
+        """
+        Update the value of the minimum range based on the spinbox input.
+
+        :param float val: The input value representing the minimum range.
+
+        :return: None
+
+        The method sets the value of the minimum range in the associated
+        horizontalSlider (`horizontalSlider_minrange`)
+        based on the provided input value and enables the set button (`pushButton_set`).
+        """
         self.ui.horizontalSlider_minrange.setValue(val)
 
     def tool_slider_x(self, val):
+        """
+        Update the value of the tool x-coordinate based on the slider position.
+
+        :param float val: The slider position representing the tool x-coordinate.
+
+        :return: None
+
+        The method sets the value of the tool x-coordinate in the associated
+        doubleSpinBox (`doubleSpinBox_toolx`)
+        based on the provided slider position and enables the set button (`pushButton_set`).
+        """
         self.ui.doubleSpinBox_toolx.setValue(val)
 
     def tool_spinbox_x(self, val):
+        """
+        Update the value of the tool x-coordinate based on the spinbox input.
+
+        :param float val: The input value representing the tool x-coordinate.
+
+        :return: None
+
+        The method sets the value of the tool x-coordinate in the associated
+        horizontalSlider (`horizontalSlider_toolx`)
+        based on the provided input value and enables the set button (`pushButton_set`).
+        """
         self.ui.horizontalSlider_toolx.setValue(val)
         self.ui.pushButton_set.setEnabled(True)
 
     def tool_slider_y(self, val):
+        """
+        Update the value of the tool y-coordinate based on the slider position.
+
+        :param float val: The slider position representing the tool y-coordinate.
+
+        :return: None
+
+        The method sets the value of the tool y-coordinate in the associated
+        doubleSpinBox (`doubleSpinBox_tooly`)
+        based on the provided slider position.
+        """
         self.ui.doubleSpinBox_tooly.setValue(val)
 
     def tool_spinbox_y(self, val):
+        """
+        Update the value of the tool y-coordinate based on the spinbox input.
+
+        :param float val: The input value representing the tool y-coordinate.
+
+        :return: None
+
+        The method sets the value of the tool y-coordinate in the associated
+        horizontalSlider (`horizontalSlider_tooly`)
+        based on the provided input value and enables the set button (`pushButton_set`).
+        """
         self.ui.horizontalSlider_tooly.setValue(val)
         self.ui.pushButton_set.setEnabled(True)
 
     def tool_slider_z(self, val):
+        """
+        Update the value of the tool z-coordinate based on the slider position.
+
+        :param float val: The slider position representing the tool z-coordinate.
+
+        :return: None
+
+        The method sets the value of the tool z-coordinate in the associated
+        doubleSpinBox (`doubleSpinBox_toolz`)
+        based on the provided slider position.
+        """
         self.ui.doubleSpinBox_toolz.setValue(val)
 
     def tool_spinbox_z(self, val):
+        """
+        Update the value of the tool z-coordinate based on the spinbox input.
+
+        :param float val: The input value representing the tool z-coordinate.
+
+        :return: None
+
+        The method sets the value of the tool z-coordinate in the associated
+        horizontalSlider (`horizontalSlider_toolz`)
+        based on the provided input value and enables the set button (`pushButton_set`).
+        """
         self.ui.horizontalSlider_toolz.setValue(val)
         self.ui.pushButton_set.setEnabled(True)
 
     def az_dial(self, val):
+        """
+        Update the value of the azimuth angle based on the dial input.
+
+        :param float val: The dial input representing the azimuth angle.
+
+        :return: None
+
+        The method sets the value of the azimuth angle in the associated
+        doubleSpinBox (`doubleSpinBox_az`)
+        based on the provided dial input.
+        """
         self.ui.doubleSpinBox_az.setValue(val)
 
     def az_spinbox(self, val):
+        """
+        Update the value of the azimuth angle based on the spinbox input.
+
+        :param float val: The input value representing the azimuth angle.
+
+        :return: None
+
+        The method sets the value of the azimuth angle in the associated dial (`dial_az`)
+        based on the provided input value and enables the set button (`pushButton_set`).
+        """
         self.ui.dial_az.setValue(val)
         self.ui.pushButton_set.setEnabled(True)
 
     def el_dial(self, val):
+        """
+        Update the value of the elevation angle based on the dial input.
+
+        :param float val: The dial input representing the elevation angle.
+
+        :return: None
+
+        The method sets the value of the elevation angle in the associated
+        doubleSpinBox (`doubleSpinBox_el`)
+        based on the provided dial input.
+        """
         self.ui.doubleSpinBox_el.setValue(val)
 
     def el_spinbox(self, val):
+        """
+        Update the value of the elevation angle based on the spinbox input.
+
+        :param float val: The input value representing the elevation angle.
+
+        :return: None
+
+        The method sets the value of the elevation angle in the associated dial (`dial_el`)
+        based on the provided input value and enables the set button (`pushButton_set`).
+        """
         self.ui.dial_el.setValue(val)
         self.ui.pushButton_set.setEnabled(True)
 
     def roll_dial(self, val):
+        """
+        Update the value of the roll angle based on the dial input.
+
+        :param float val: The dial input representing the roll angle.
+
+        :return: None
+
+        The method sets the value of the roll angle in the associated
+        doubleSpinBox (`doubleSpinBox_roll`)
+        based on the provided dial input.
+        """
         self.ui.doubleSpinBox_roll.setValue(val)
 
     def roll_spinbox(self, val):
+        """
+        Update the value of the roll angle based on the spinbox input.
+
+        :param float val: The input value representing the roll angle.
+
+        :return: None
+
+        The method sets the value of the roll angle in the associated dial (`dial_roll`)
+        based on the provided input value and enables the set button (`pushButton_set`).
+        """
         self.ui.dial_roll.setValue(val)
         self.ui.pushButton_set.setEnabled(True)
 
     def on_ctrl_connect_button_clicked(self):
+        """
+        Handle the event when the control connect button is clicked.
+
+        This method manages the connection and disconnection of the control socket based on the
+        current state of the button ("START" or "STOP"). It updates the UI elements accordingly.
+
+        :return: None
+
+        The method performs the following steps:
+        1. If the button text is "START":
+           a. Disable the control connect button (`pushButton_ctrl`).
+           b. Change the button appearance to indicate it's in progress.
+           c. Disable relevant UI elements (IP, control port, command port, speed).
+           d. Create a control socket (`ctrl_socket`) and move it to a separate
+           thread (`ctrl_thread`).
+           e. Connect signals to update status and handle incoming messages.
+           f. Start the control thread.
+        2. If the button text is "STOP":
+           a. Disable the control connect button (`pushButton_ctrl`).
+           b. Change the button appearance to indicate it's in progress.
+           c. Display and send "STOP," "SRVOFF," and "CNTLOFF" commands to the control socket.
+           d. Close the control socket.
+           e. Close the command socket.
+
+        Note:
+        - The control socket (`ctrl_socket`) and control thread (`ctrl_thread`)
+        are instance variables.
+        """
         if self.ui.pushButton_ctrl.text() == "START":
             self.ui.pushButton_ctrl.setEnabled(False)
             self.ui.pushButton_ctrl.setStyleSheet(
@@ -786,7 +1260,30 @@ class MyApp(QtWidgets.QMainWindow):
             self.ctrl_socket.close()
             self.cmd_socket.close()
 
-    def on_ctrl_status_update(self, status, addr):
+    def on_ctrl_status_update(self, status, unused_addr):
+        """
+        Handle the update of the control socket status.
+
+        This method is called when the status of the control socket
+        changes. It updates the UI elements based on the new status
+        and performs necessary actions.
+
+        :param int status: The new status of the control socket.
+        :param str addr: The address of the control socket.
+
+        :return: None
+
+        The method performs the following steps:
+        1. If the new status is STOP:
+           a. Set the control connect button text to "START."
+           b. Change the button appearance to indicate it's ready to start.
+           c. Disconnect signals and quit the control thread.
+           d. Enable relevant UI elements (IP, control port, command port, speed).
+           e. Disable the control group box (`groupBox_ctrl`).
+           f. Enable the control connect button (`pushButton_ctrl`).
+        2. If the new status is CONNECTED:
+           a. Call the `connect_cmd_port` method to establish a connection on the command port.
+        """
         if status == TCPClient.STOP:
             self.ui.pushButton_ctrl.setText("START")
             self.ui.pushButton_ctrl.setStyleSheet(
@@ -810,6 +1307,22 @@ class MyApp(QtWidgets.QMainWindow):
             self.connect_cmd_port()
 
     def connect_cmd_port(self):
+        """
+        Establish a connection on the command port.
+
+        This method creates a new command socket (`cmd_socket`)
+        and moves it to a separate thread (`cmd_thread`).
+        It connects signals to update status and handle incoming
+        messages and starts the command thread.
+
+        :return: None
+
+        The method performs the following steps:
+        1. Create a new command thread (`cmd_thread`).
+        2. Create a new command socket (`cmd_socket`) with the provided IP and command port values.
+        3. Connect signals to update status and handle incoming messages.
+        4. Start the command thread.
+        """
         self.cmd_thread = QThread()
         self.cmd_socket = TCPClient(
             self.ui.lineEdit_ip.text(), self.ui.spinBox_cmd_port.value()
@@ -821,7 +1334,36 @@ class MyApp(QtWidgets.QMainWindow):
         self.cmd_socket.moveToThread(self.cmd_thread)
         self.cmd_thread.start()
 
-    def on_cmd_status_update(self, status, addr):
+    def on_cmd_status_update(self, status, unused_addr):
+        """
+        Handle the update of the command socket status.
+
+        This method is called when the status of the command socket changes.
+        It updates the UI elements based on the new status and performs
+        necessary actions.
+
+        :param int status: The new status of the command socket.
+        :param str addr: The address of the command socket.
+
+        :return: None
+
+        The method performs the following steps:
+        1. If the new status is STOP:
+           a. Close the control socket (`ctrl_socket`).
+           b. Set the control connect button text to "START."
+           c. Change the button appearance to indicate it's ready to start.
+           d. Disconnect signals and quit the command thread.
+           e. Enable relevant UI elements (IP, control port, command port, speed).
+           f. Disable the control group box (`groupBox_ctrl`).
+        2. If the new status is CONNECTED:
+           a. Save the configuration with the updated IP and port values.
+           b. Set up the control socket with necessary initialization commands.
+           c. If the initialization commands are successful, update the
+           configuration and enable the control group box.
+           d. Set the control connect button text to "STOP."
+           e. Change the button appearance to indicate it's in progress.
+           f. Enable the control connect button (`pushButton_ctrl`).
+        """
         if status == TCPClient.STOP:
             self.ctrl_socket.close()
 
@@ -883,6 +1425,17 @@ class MyApp(QtWidgets.QMainWindow):
         self.ui.pushButton_ctrl.setEnabled(True)
 
     def on_tcp_client_message_ready(self, msg):
+        """
+        Handle the event when a message is ready from the TCP client.
+
+        This method is called when a message is received from the TCP
+        client. It appends the received message to the text browser in
+        the user interface.
+
+        :param str msg: The received message.
+
+        :return: None
+        """
         self.ui.textBrowser.append(
             '<p style="text-align: center;">'
             + '<span style="color: #2196F3;"><strong>'
@@ -894,6 +1447,16 @@ class MyApp(QtWidgets.QMainWindow):
         )
 
     def display_message(self, msg):
+        """
+        Display a message in the text browser.
+
+        This method appends a formatted message to the text browser in
+        the user interface, indicating whether the message was sent or received.
+
+        :param str msg: The message to be displayed.
+
+        :return: None
+        """
         self.ui.textBrowser.append(
             '<p style="text-align: left;">'
             + '<span style="color: #000000;"><strong>'
