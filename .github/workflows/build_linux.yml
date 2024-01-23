@@ -28,6 +28,7 @@ jobs:
       run: |
         pyinstaller armstrong.spec
         cp mainwindow.ui ./dist/armstrong/
+        cp -rf res ./dist/armstrong/
     - name: Archive built module
       uses: actions/upload-artifact@v3
       if: success()
