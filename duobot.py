@@ -124,7 +124,12 @@ class MyApp(QtWidgets.QMainWindow):
         self.ui.show()
 
     def init_ui(self):
-        """_summary_"""
+        """
+        Initializes the user interface of the application.
+
+        :return: None
+        :rtype: None
+        """
         self.ui.pushButton_start.setStyleSheet("background-color: green; color: white;")
         self.ui.groupBox.setStyleSheet("background-color: #B3E5FC; border: 0px;")
         self.ui.groupBox_2.setStyleSheet("background-color: #B3E5FC; border: 0px;")
@@ -195,7 +200,12 @@ class MyApp(QtWidgets.QMainWindow):
         save_config(self.config)
 
     def on_connect_button_clicked_right(self):
-        """_summary_"""
+        """
+        Handles the event when the 'Connect' button for the right device is clicked.
+
+        :return: None
+        :rtype: None
+        """
         self.ui.pushButton_start.setEnabled(False)
         self.ui.pushButton_start.setStyleSheet("background-color: grey; color: white;")
 
@@ -230,11 +240,17 @@ class MyApp(QtWidgets.QMainWindow):
             self.cmd_socket_r.close()
 
     def on_ctrl_status_update_right(self, status, unused_addr):
-        """_summary_
+        """
+        Handles the event when the status of the right device's control port is updated.
 
-        Args:
-            status (_type_): _description_
-            addr (_type_): _description_
+        :param status: The updated status of the control port.
+        :type status: int
+
+        :param unused_addr: The address of the right device.
+        :type unused_addr: str
+
+        :return: None
+        :rtype: None
         """
         if status == TCPClient.STOP:
             self.ui.pushButton_connect_r.setText("START")
@@ -265,7 +281,14 @@ class MyApp(QtWidgets.QMainWindow):
             self.connect_cmd_port_right()
 
     def connect_cmd_port_right(self):
-        """_summary_"""
+        """
+        Connect to the command port on the right side.
+
+        This method initializes a new thread and a TCP client socket to connect to the command port
+        specified by the IP address and port number entered in the UI.
+
+        :return: None
+        """
         self.cmd_thread_r = QThread()
         self.cmd_socket_r = TCPClient(
             self.ui.lineEdit_ip_r.text(), int(self.ui.doubleSpinBox_cmd_r.value())
@@ -278,11 +301,15 @@ class MyApp(QtWidgets.QMainWindow):
         self.cmd_thread_r.start()
 
     def on_cmd_status_update_right(self, status, unused_addr):
-        """_summary_
+        """
+        Handle updates in command status for the right side.
 
-        Args:
-            status (_type_): _description_
-            addr (_type_): _description_
+        :param status: The status code representing the current state of the command connection.
+        :type status: int
+        :param unused_addr: Unused parameter for the address (can be ignored).
+        :type unused_addr: str
+
+        :return: None
         """
         if status == TCPClient.STOP:
             self.ctrl_socket_r.close()
@@ -344,10 +371,18 @@ class MyApp(QtWidgets.QMainWindow):
                 self.ui.pushButton_start.setEnabled(True)
 
     def on_tcp_client_message_ready_right(self, msg):
-        """_summary_
+        """
+        Handle the ready message received from the TCP client on the right side.
 
-        Args:
-            msg (_type_): _description_
+        This method processes the message received from the TCP client and updates
+        the azimuth, elevation, and polarization values on the right side UI.
+        Additionally, it enables or disables certain UI elements based on
+        the content of the received message.
+
+        :param msg: The message received from the TCP client.
+        :type msg: str
+
+        :return: None
         """
         msg_list = msg.split()
         # if msg_list[0] == 'Right':
@@ -370,10 +405,16 @@ class MyApp(QtWidgets.QMainWindow):
         self.ui.textBrowser_r.append(html_received_msg(msg))
 
     def on_tcp_client_error_right(self, msg):
-        """_summary_
+        """
+        Handle errors from the TCP client on the right side.
 
-        Args:
-            msg (_type_): _description_
+        This method processes error messages received from the TCP client on the right side,
+        appends them to the UI text browser, and performs additional actions if applicable.
+
+        :param msg: The error message received from the TCP client.
+        :type msg: str
+
+        :return: None
         """
         self.ui.textBrowser_r.append(html_err_msg(msg))
 
@@ -384,10 +425,16 @@ class MyApp(QtWidgets.QMainWindow):
             self.ui.pushButton_connect_l.setEnabled(False)
 
     def spinbox_az_r(self, val):
-        """_summary_
+        """
+        Handle changes in the azimuth spinbox value for the right side.
 
-        Args:
-            val (_type_): _description_
+        This method updates various UI elements based on the azimuth value changes, including
+        adjusting sliders, enabling/disabling elements, and setting maximum values for sliders.
+
+        :param val: The new azimuth value.
+        :type val: float
+
+        :return: None
         """
         self.ui.horizontalSlider_az_r.setValue(val * 10)
         if abs(val) <= AZ_CENTER_THOD:
@@ -435,10 +482,16 @@ class MyApp(QtWidgets.QMainWindow):
         self.ui.pushButton_set_r.setEnabled(True)
 
     def slider_az_r(self, val):
-        """_summary_
+        """
+        Handle changes in the azimuth slider value for the right side.
 
-        Args:
-            val (_type_): _description_
+        This method updates various UI elements based on the azimuth slider value changes, including
+        adjusting spinboxes, enabling/disabling elements, and setting maximum values for sliders.
+
+        :param val: The new azimuth slider value.
+        :type val: int
+
+        :return: None
         """
         self.ui.doubleSpinBox_az_r.setValue(val / 10)
 
@@ -487,10 +540,16 @@ class MyApp(QtWidgets.QMainWindow):
         self.ui.pushButton_set_r.setEnabled(True)
 
     def spinbox_el_rl(self, val):
-        """_summary_
+        """
+        Handle changes in the elevation spinbox value for the right side (left leg).
 
-        Args:
-            val (_type_): _description_
+        This method updates the vertical slider and enables/disables azimuth-related UI elements
+        based on the elevation value changes.
+
+        :param val: The new elevation value.
+        :type val: float
+
+        :return: None
         """
         self.ui.verticalSlider_el_rl.setValue(val * 10)
         if val <= EL_UP_THOD:
@@ -502,10 +561,16 @@ class MyApp(QtWidgets.QMainWindow):
         self.ui.pushButton_set_r.setEnabled(True)
 
     def slider_el_rl(self, val):
-        """_summary_
+        """
+        Handle changes in the elevation slider value for the right side (left leg).
 
-        Args:
-            val (_type_): _description_
+        This method updates the elevation spinbox and enables/disables azimuth-related UI elements
+        based on the elevation slider value changes.
+
+        :param val: The new elevation slider value.
+        :type val: int
+
+        :return: None
         """
         self.ui.doubleSpinBox_el_rl.setValue(val / 10)
         if val / 10 <= EL_UP_THOD:
@@ -517,25 +582,42 @@ class MyApp(QtWidgets.QMainWindow):
         self.ui.pushButton_set_r.setEnabled(True)
 
     def dial_pol_r(self, val):
-        """_summary_
+        """
+        Handle changes in the polarization dial value for the right side.
 
-        Args:
-            val (_type_): _description_
+        This method updates the polarization spinbox based on the dial value changes.
+
+        :param val: The new polarization dial value.
+        :type val: float
+
+        :return: None
         """
         self.ui.doubleSpinBox_pol_r.setValue(val)
         self.ui.pushButton_set_r.setEnabled(True)
 
     def spinbox_pol_r(self, val):
-        """_summary_
+        """
+        Handle changes in the polarization spinbox value for the right side.
 
-        Args:
-            val (_type_): _description_
+        This method updates the polarization dial based on the spinbox value changes.
+
+        :param val: The new polarization spinbox value.
+        :type val: float
+
+        :return: None
         """
         self.ui.dial_pol_r.setValue(int(val))
         self.ui.pushButton_set_r.setEnabled(True)
 
     def on_home_button_clicked_right(self):
-        """_summary_"""
+        """
+        Handle the click event of the home button on the right side.
+
+        This method disables the right and left bottom groups in the UI, sends a command to initiate
+        the home sequence for the right side, and displays the corresponding message.
+
+        :return: None
+        """
         self.ui.groupBox_rightbot.setEnabled(False)
         self.ui.groupBox_leftbot.setEnabled(False)
         msg = "1.0\r\n"
@@ -543,7 +625,17 @@ class MyApp(QtWidgets.QMainWindow):
         self.cmd_socket_r.send(msg)
 
     def on_set_button_clicked_right(self):
-        """_summary_"""
+        """
+        Handle the click event of the set button on the right side.
+
+        This method checks the azimuth difference between the right and
+        left sides. If the difference is greater than or equal to a specified
+        margin, it disables the right and left bottom groups in the UI, sends a command
+        to set the position for the right side, and displays the corresponding message.
+        Otherwise, it displays an error message.
+
+        :return: None
+        """
         right_az = self.ui.doubleSpinBox_az_r.value()
 
         if abs(right_az - self.az_l) >= AZ_MARGIN:
@@ -575,16 +667,34 @@ class MyApp(QtWidgets.QMainWindow):
             )
 
     def display_message_right(self, msg):
-        """_summary_
+        """
+        Display a message in the text browser for the right side.
 
-        Args:
-            msg (_type_): _description_
+        This method appends a formatted message to the text browser for the right side,
+        indicating that a message has been sent.
+
+        :param msg: The message to be displayed.
+        :type msg: str
+
+        :return: None
         """
         self.ui.textBrowser_r.append(html_sent_msg(msg))
 
     ##########################################################
     def on_connect_button_clicked_left(self):
-        """_summary_"""
+        """
+        Handle the click event of the connect button on the left side.
+
+        This method either starts or stops the connection on the left
+        side based on the current state of the button. If the button
+        text is "START," it initializes a new thread and a TCP client
+        socket to connect to the control port specified by the IP address
+        and port number entered in the UI. If the button text is "STOP,"
+        it stops the connection and closes the control and command sockets
+        on the left side.
+
+        :return: None
+        """
         if self.ui.pushButton_connect_l.text() == "START":
             self.ui.pushButton_connect_l.setEnabled(False)
 
@@ -616,11 +726,20 @@ class MyApp(QtWidgets.QMainWindow):
             self.cmd_socket_l.close()
 
     def on_ctrl_status_update_left(self, status, unused_addr):
-        """_summary_
+        """
+        Handle updates in control status for the left side.
 
-        Args:
-            status (_type_): _description_
-            addr (_type_): _description_
+        This method is triggered when there is a change in the status of
+        the control connection on the left side. It performs actions based
+        on the received status, such as updating UI elements, disconnecting signals,
+        and enabling/disabling certain controls.
+
+        :param status: The status code representing the current state of the control connection.
+        :type status: int
+        :param unused_addr: Unused parameter for the address (can be ignored).
+        :type unused_addr: str
+
+        :return: None
         """
         if status == TCPClient.STOP:
             self.ui.pushButton_connect_l.setText("START")
@@ -651,7 +770,14 @@ class MyApp(QtWidgets.QMainWindow):
             self.connect_cmd_port_left()
 
     def connect_cmd_port_left(self):
-        """_summary_"""
+        """
+        Connect to the command port on the left side.
+
+        This method initializes a new thread and a TCP client socket to connect to the command port
+        specified by the IP address and port number entered in the UI.
+
+        :return: None
+        """
         self.cmd_thread_l = QThread()
         self.cmd_socket_l = TCPClient(
             self.ui.lineEdit_ip_l.text(), int(self.ui.doubleSpinBox_cmd_l.value())
@@ -664,11 +790,21 @@ class MyApp(QtWidgets.QMainWindow):
         self.cmd_thread_l.start()
 
     def on_cmd_status_update_left(self, status, unused_addr):
-        """_summary_
+        """
+        Handle updates in command status for the left side.
 
-        Args:
-            status (_type_): _description_
-            addr (_type_): _description_
+        This method is triggered when there is a change in the status of the
+        command connection on the left side. It performs actions based on the
+        received status, such as closing the control socket, updating UI elements,
+        and sending commands. Additionally, it triggers the connection on the right
+        side if not in development mode.
+
+        :param status: The status code representing the current state of the command connection.
+        :type status: int
+        :param unused_addr: Unused parameter for the address (can be ignored).
+        :type unused_addr: str
+
+        :return: None
         """
         if status == TCPClient.STOP:
             self.ctrl_socket_l.close()
@@ -730,10 +866,18 @@ class MyApp(QtWidgets.QMainWindow):
         #         self.ui.pushButton_start.setEnabled(True)
 
     def on_tcp_client_message_ready_left(self, msg):
-        """_summary_
+        """
+        Handle the ready message received from the TCP client on the left side.
 
-        Args:
-            msg (_type_): _description_
+        This method processes the message received from the TCP client and updates
+        the azimuth, elevation, and polarization values on the left side UI.
+        Additionally, it enables or disables certain UI elements based on
+        the content of the received message.
+
+        :param msg: The message received from the TCP client.
+        :type msg: str
+
+        :return: None
         """
         msg_list = msg.split()
         # print(msg_list)
@@ -757,10 +901,16 @@ class MyApp(QtWidgets.QMainWindow):
         self.ui.textBrowser_l.append(html_received_msg(msg))
 
     def on_tcp_client_error_left(self, msg):
-        """_summary_
+        """
+        Handle errors from the TCP client on the left side.
 
-        Args:
-            msg (_type_): _description_
+        This method processes error messages received from the TCP client on the left side,
+        appends them to the UI text browser, and performs additional actions if applicable.
+
+        :param msg: The error message received from the TCP client.
+        :type msg: str
+
+        :return: None
         """
         self.ui.textBrowser_l.append(html_err_msg(msg))
 
@@ -772,10 +922,16 @@ class MyApp(QtWidgets.QMainWindow):
             self.ui.pushButton_connect_r.setEnabled(False)
 
     def spinbox_az_l(self, val):
-        """_summary_
+        """
+        Handle changes in the azimuth spinbox value for the left side.
 
-        Args:
-            val (_type_): _description_
+        This method updates various UI elements based on the azimuth value changes, including
+        adjusting sliders, enabling/disabling elements, and setting maximum values for sliders.
+
+        :param val: The new azimuth value.
+        :type val: float
+
+        :return: None
         """
         self.ui.horizontalSlider_az_l.setValue(val * 10)
         if abs(val) <= AZ_CENTER_THOD:
@@ -823,10 +979,17 @@ class MyApp(QtWidgets.QMainWindow):
         self.ui.pushButton_set_l.setEnabled(True)
 
     def slider_az_l(self, val):
-        """_summary_
+        """
+        Handle changes in the azimuth slider value for the left side.
 
-        Args:
-            val (_type_): _description_
+        This method updates the azimuth spinbox and adjusts various UI elements
+        based on the slider value changes, including enabling/disabling elements
+        and setting maximum values for sliders.
+
+        :param val: The new azimuth slider value.
+        :type val: int
+
+        :return: None
         """
         self.ui.doubleSpinBox_az_l.setValue(val / 10)
 
@@ -875,10 +1038,16 @@ class MyApp(QtWidgets.QMainWindow):
         self.ui.pushButton_set_l.setEnabled(True)
 
     def spinbox_el_ll(self, val):
-        """_summary_
+        """
+        Handle changes in the elevation spinbox value for the left side (lower left).
 
-        Args:
-            val (_type_): _description_
+        This method updates the elevation slider and enables/disables azimuth controls
+        based on the spinbox value changes.
+
+        :param val: The new elevation spinbox value.
+        :type val: float
+
+        :return: None
         """
         self.ui.verticalSlider_el_ll.setValue(val * 10)
         if val <= EL_UP_THOD:
@@ -890,10 +1059,16 @@ class MyApp(QtWidgets.QMainWindow):
         self.ui.pushButton_set_l.setEnabled(True)
 
     def slider_el_ll(self, val):
-        """_summary_
+        """
+        Handle changes in the elevation slider value for the left side (lower left).
 
-        Args:
-            val (_type_): _description_
+        This method updates the elevation spinbox and enables/disables azimuth controls
+        based on the slider value changes.
+
+        :param val: The new elevation slider value.
+        :type val: int
+
+        :return: None
         """
         self.ui.doubleSpinBox_el_ll.setValue(val / 10)
         if val / 10 <= EL_UP_THOD:
@@ -905,25 +1080,42 @@ class MyApp(QtWidgets.QMainWindow):
         self.ui.pushButton_set_l.setEnabled(True)
 
     def dial_pol_l(self, val):
-        """_summary_
+        """
+        Handle changes in the polarization dial value for the left side.
 
-        Args:
-            val (_type_): _description_
+        This method updates the polarization spinbox based on changes in the dial value.
+
+        :param val: The new polarization dial value.
+        :type val: int
+
+        :return: None
         """
         self.ui.doubleSpinBox_pol_l.setValue(val)
         self.ui.pushButton_set_l.setEnabled(True)
 
     def spinbox_pol_l(self, val):
-        """_summary_
+        """
+        Handle changes in the polarization spinbox value for the left side.
 
-        Args:
-            val (_type_): _description_
+        This method updates the polarization dial based on changes in the spinbox value.
+
+        :param val: The new polarization spinbox value.
+        :type val: float
+
+        :return: None
         """
         self.ui.dial_pol_l.setValue(int(val))
         self.ui.pushButton_set_l.setEnabled(True)
 
     def on_home_button_clicked_left(self):
-        """_summary_"""
+        """
+        Handle the click event of the home button on the left side.
+
+        This method is triggered when the home button on the left side is clicked.
+        It disables certain UI elements and sends a command to the left command socket.
+
+        :return: None
+        """
         self.ui.groupBox_leftbot.setEnabled(False)
         self.ui.groupBox_rightbot.setEnabled(False)
         msg = "1.0\r\n"
@@ -931,7 +1123,16 @@ class MyApp(QtWidgets.QMainWindow):
         self.cmd_socket_l.send(msg)
 
     def on_set_button_clicked_left(self):
-        """_summary_"""
+        """
+        Handle the click event of the set button on the left side.
+
+        This method is triggered when the set button on the left side is clicked.
+        It checks the azimuth difference between the left and right sides and sends
+        a command if the difference is significant.
+        Additionally, it updates UI elements and saves configuration settings.
+
+        :return: None
+        """
         left_az = self.ui.doubleSpinBox_az_l.value()
 
         if abs(self.az_r - left_az) >= AZ_MARGIN:
@@ -963,10 +1164,15 @@ class MyApp(QtWidgets.QMainWindow):
             )
 
     def display_message_left(self, msg):
-        """_summary_
+        """
+        Display a message on the left side text browser.
 
-        Args:
-            msg (_type_): _description_
+        This method appends the sent message to the text browser on the left side UI.
+
+        :param msg: The message to be displayed.
+        :type msg: str
+
+        :return: None
         """
         self.ui.textBrowser_l.append(html_sent_msg(msg))
 
