@@ -34,7 +34,7 @@ def start_leftbot_sequence(msg_obj, ctrl_obj):
     msg_obj("1;1;RUNLEFTROBOT;0")
     if ctrl_obj.send_wait("1;1;RUNLEFTROBOT;0"):
         return 1
-    
+
     time.sleep(1)
 
     return 0
@@ -72,13 +72,13 @@ def start_rightbot_sequence(msg_obj, ctrl_obj):
     msg_obj("1;1;RUNRIGHTROBOT;0")
     if ctrl_obj.send_wait("1;1;RUNRIGHTROBOT;0"):
         return 1
-    
+
     time.sleep(1)
 
     return 0
 
 
-def stop_sequence(msg_obj, ctrl_obj, cmd_obj):
+def stop_sequence(msg_obj, ctrl_obj, unused_cmd_obj):
     msg_obj("1;1;STOP")
     ctrl_obj.send("1;1;STOP")
     msg_obj("1;1;SRVOFF")
@@ -94,8 +94,9 @@ def stop_sequence(msg_obj, ctrl_obj, cmd_obj):
 
 def save_config(config):
     try:
-        json.dump(config, open("config.json", "w+"), indent=4)
-    except PermissionError as err:
+        with open("config.json", "w+", encoding="utf-8") as write_file:
+            json.dump(config, write_file, indent=4)
+    except PermissionError:
         pass
 
 

@@ -1,10 +1,20 @@
+"""
+This module provides an app named "DuoBot" that controls the motion of a pair
+of robot arms for radar testing.
+
+The app uses Python to communicate with the robot arms and send commands to it.
+The app is designed to be easy to use and can be customized to suit different needs.
+
+By: Zhengyu Peng <zhengyu.peng@aptiv.com>
+
+"""
 import sys
+from pathlib import Path
+import json
+
 from PySide6 import QtWidgets, QtCore
 from PySide6.QtCore import QThread, QFile
 from PySide6.QtUiTools import QUiLoader
-
-from pathlib import Path
-import json
 
 from tcpclient import TCPClient
 
@@ -24,19 +34,28 @@ AZ_MARGIN = 2
 
 _VERSION_ = "v3.1"
 STATUS_STR = (
-    '<a href="https://hpc-gitlab.aptiv.com/zjx8rj/automation/-/tree/main/duobot_gui">Source Code</a>'
+    '<a href="https://hpc-gitlab.aptiv.com/zjx8rj/automation#duobot">New Release</a>'
     + "&nbsp;•&nbsp;"
     + '<a href="https://hpc-gitlab.aptiv.com/zjx8rj/automation/-/issues">Issue Tracker</a>'
     + "&nbsp;•&nbsp;"
-    + '<a href="https://hpc-gitlab.aptiv.com/zjx8rj/automation/-/tree/main/duobot_matlab">MATLAB API</a>'
+    + '<a href="https://hpc-gitlab.aptiv.com/zjx8rj/automation/-/tree/main/duobot_matlab">MATLAB API</a>'  # pylint: disable=line-too-long
     + "&nbsp;•&nbsp;"
     + '<a href="https://hpc-gitlab.aptiv.com/zjx8rj/automation/-/tree/main/#duobot">CANape Lib</a>'
 )
 
 
 class MyApp(QtWidgets.QMainWindow):
+    """
+    The DuoBot GUI for robot arm control
+    """
+
     def __init__(self):
-        super(MyApp, self).__init__()
+        """
+        Initializes the MyApp class.
+
+        :return: None
+        """
+        super().__init__()
 
         self.az_l = 0
         self.el_l = 0
@@ -45,14 +64,26 @@ class MyApp(QtWidgets.QMainWindow):
         self.el_r = 0
         self.pol_r = 0
 
+        self.ctrl_thread_r = None
+        self.ctrl_socket_r = None
+        self.ctrl_thread_l = None
+        self.ctrl_socket_l = None
+
+        self.cmd_thread_r = None
+        self.cmd_socket_r = None
+        self.cmd_thread_l = None
+        self.cmd_socket_l = None
+
         config_file = Path("config.json")
         if config_file.exists():
-            self.config = json.load(open("config.json", "r"))
+            with open("config.json", "r", encoding="utf-8") as read_file:
+                self.config = json.load(read_file)
         else:
-            self.config = dict()
-            json.dump(self.config, open("config.json", "w+"))
+            self.config = {}
+            with open("config.json", "w+", encoding="utf-8") as write_file:
+                json.dump(self.config, write_file)
 
-        """Load UI"""
+        # Load UI
         ui_file_name = "mainwindow.ui"
         ui_file = QFile(ui_file_name)
         loader = QUiLoader()
@@ -93,13 +124,14 @@ class MyApp(QtWidgets.QMainWindow):
         self.ui.show()
 
     def init_ui(self):
+        """_summary_"""
         self.ui.pushButton_start.setStyleSheet("background-color: green; color: white;")
-        self.ui.groupBox.setStyleSheet("background-color: #B3E5FC;")
-        self.ui.groupBox_2.setStyleSheet("background-color: #B3E5FC;")
-        self.ui.groupBox_3.setStyleSheet("background-color: #B3E5FC;")
-        self.ui.groupBox_5.setStyleSheet("background-color: #DCEDC8;")
-        self.ui.groupBox_7.setStyleSheet("background-color: #DCEDC8;")
-        self.ui.groupBox_8.setStyleSheet("background-color: #DCEDC8;")
+        self.ui.groupBox.setStyleSheet("background-color: #B3E5FC; border: 0px;")
+        self.ui.groupBox_2.setStyleSheet("background-color: #B3E5FC; border: 0px;")
+        self.ui.groupBox_3.setStyleSheet("background-color: #B3E5FC; border: 0px;")
+        self.ui.groupBox_5.setStyleSheet("background-color: #DCEDC8; border: 0px;")
+        self.ui.groupBox_7.setStyleSheet("background-color: #DCEDC8; border: 0px;")
+        self.ui.groupBox_8.setStyleSheet("background-color: #DCEDC8; border: 0px;")
 
         self.ui.groupBox_r.setEnabled(False)
         self.ui.groupBox_l.setEnabled(False)
@@ -163,6 +195,7 @@ class MyApp(QtWidgets.QMainWindow):
         save_config(self.config)
 
     def on_connect_button_clicked_right(self):
+        """_summary_"""
         self.ui.pushButton_start.setEnabled(False)
         self.ui.pushButton_start.setStyleSheet("background-color: grey; color: white;")
 
@@ -196,7 +229,13 @@ class MyApp(QtWidgets.QMainWindow):
             self.ctrl_socket_r.close()
             self.cmd_socket_r.close()
 
-    def on_ctrl_status_update_right(self, status, addr):
+    def on_ctrl_status_update_right(self, status, unused_addr):
+        """_summary_
+
+        Args:
+            status (_type_): _description_
+            addr (_type_): _description_
+        """
         if status == TCPClient.STOP:
             self.ui.pushButton_connect_r.setText("START")
 
@@ -226,6 +265,7 @@ class MyApp(QtWidgets.QMainWindow):
             self.connect_cmd_port_right()
 
     def connect_cmd_port_right(self):
+        """_summary_"""
         self.cmd_thread_r = QThread()
         self.cmd_socket_r = TCPClient(
             self.ui.lineEdit_ip_r.text(), int(self.ui.doubleSpinBox_cmd_r.value())
@@ -237,7 +277,13 @@ class MyApp(QtWidgets.QMainWindow):
         self.cmd_socket_r.moveToThread(self.cmd_thread_r)
         self.cmd_thread_r.start()
 
-    def on_cmd_status_update_right(self, status, addr):
+    def on_cmd_status_update_right(self, status, unused_addr):
+        """_summary_
+
+        Args:
+            status (_type_): _description_
+            addr (_type_): _description_
+        """
         if status == TCPClient.STOP:
             self.ctrl_socket_r.close()
 
@@ -298,6 +344,11 @@ class MyApp(QtWidgets.QMainWindow):
                 self.ui.pushButton_start.setEnabled(True)
 
     def on_tcp_client_message_ready_right(self, msg):
+        """_summary_
+
+        Args:
+            msg (_type_): _description_
+        """
         msg_list = msg.split()
         # if msg_list[0] == 'Right':
         if msg_list[0] == self.config["RIGHT_SN"]:
@@ -319,6 +370,11 @@ class MyApp(QtWidgets.QMainWindow):
         self.ui.textBrowser_r.append(html_received_msg(msg))
 
     def on_tcp_client_error_right(self, msg):
+        """_summary_
+
+        Args:
+            msg (_type_): _description_
+        """
         self.ui.textBrowser_r.append(html_err_msg(msg))
 
         if not self.dev_mode and self.ui.pushButton_connect_l.text() == "STOP":
@@ -328,6 +384,11 @@ class MyApp(QtWidgets.QMainWindow):
             self.ui.pushButton_connect_l.setEnabled(False)
 
     def spinbox_az_r(self, val):
+        """_summary_
+
+        Args:
+            val (_type_): _description_
+        """
         self.ui.horizontalSlider_az_r.setValue(val * 10)
         if abs(val) <= AZ_CENTER_THOD:
             self.ui.verticalSlider_el_rl.setEnabled(True)
@@ -374,6 +435,11 @@ class MyApp(QtWidgets.QMainWindow):
         self.ui.pushButton_set_r.setEnabled(True)
 
     def slider_az_r(self, val):
+        """_summary_
+
+        Args:
+            val (_type_): _description_
+        """
         self.ui.doubleSpinBox_az_r.setValue(val / 10)
 
         if abs(val / 10) <= AZ_CENTER_THOD:
@@ -421,6 +487,11 @@ class MyApp(QtWidgets.QMainWindow):
         self.ui.pushButton_set_r.setEnabled(True)
 
     def spinbox_el_rl(self, val):
+        """_summary_
+
+        Args:
+            val (_type_): _description_
+        """
         self.ui.verticalSlider_el_rl.setValue(val * 10)
         if val <= EL_UP_THOD:
             self.ui.doubleSpinBox_az_r.setEnabled(True)
@@ -431,6 +502,11 @@ class MyApp(QtWidgets.QMainWindow):
         self.ui.pushButton_set_r.setEnabled(True)
 
     def slider_el_rl(self, val):
+        """_summary_
+
+        Args:
+            val (_type_): _description_
+        """
         self.ui.doubleSpinBox_el_rl.setValue(val / 10)
         if val / 10 <= EL_UP_THOD:
             self.ui.doubleSpinBox_az_r.setEnabled(True)
@@ -441,14 +517,25 @@ class MyApp(QtWidgets.QMainWindow):
         self.ui.pushButton_set_r.setEnabled(True)
 
     def dial_pol_r(self, val):
+        """_summary_
+
+        Args:
+            val (_type_): _description_
+        """
         self.ui.doubleSpinBox_pol_r.setValue(val)
         self.ui.pushButton_set_r.setEnabled(True)
 
     def spinbox_pol_r(self, val):
+        """_summary_
+
+        Args:
+            val (_type_): _description_
+        """
         self.ui.dial_pol_r.setValue(int(val))
         self.ui.pushButton_set_r.setEnabled(True)
 
     def on_home_button_clicked_right(self):
+        """_summary_"""
         self.ui.groupBox_rightbot.setEnabled(False)
         self.ui.groupBox_leftbot.setEnabled(False)
         msg = "1.0\r\n"
@@ -456,6 +543,7 @@ class MyApp(QtWidgets.QMainWindow):
         self.cmd_socket_r.send(msg)
 
     def on_set_button_clicked_right(self):
+        """_summary_"""
         right_az = self.ui.doubleSpinBox_az_r.value()
 
         if abs(right_az - self.az_l) >= AZ_MARGIN:
@@ -487,10 +575,16 @@ class MyApp(QtWidgets.QMainWindow):
             )
 
     def display_message_right(self, msg):
+        """_summary_
+
+        Args:
+            msg (_type_): _description_
+        """
         self.ui.textBrowser_r.append(html_sent_msg(msg))
 
     ##########################################################
     def on_connect_button_clicked_left(self):
+        """_summary_"""
         if self.ui.pushButton_connect_l.text() == "START":
             self.ui.pushButton_connect_l.setEnabled(False)
 
@@ -521,7 +615,13 @@ class MyApp(QtWidgets.QMainWindow):
             self.ctrl_socket_l.close()
             self.cmd_socket_l.close()
 
-    def on_ctrl_status_update_left(self, status, addr):
+    def on_ctrl_status_update_left(self, status, unused_addr):
+        """_summary_
+
+        Args:
+            status (_type_): _description_
+            addr (_type_): _description_
+        """
         if status == TCPClient.STOP:
             self.ui.pushButton_connect_l.setText("START")
 
@@ -551,6 +651,7 @@ class MyApp(QtWidgets.QMainWindow):
             self.connect_cmd_port_left()
 
     def connect_cmd_port_left(self):
+        """_summary_"""
         self.cmd_thread_l = QThread()
         self.cmd_socket_l = TCPClient(
             self.ui.lineEdit_ip_l.text(), int(self.ui.doubleSpinBox_cmd_l.value())
@@ -562,7 +663,13 @@ class MyApp(QtWidgets.QMainWindow):
         self.cmd_socket_l.moveToThread(self.cmd_thread_l)
         self.cmd_thread_l.start()
 
-    def on_cmd_status_update_left(self, status, addr):
+    def on_cmd_status_update_left(self, status, unused_addr):
+        """_summary_
+
+        Args:
+            status (_type_): _description_
+            addr (_type_): _description_
+        """
         if status == TCPClient.STOP:
             self.ctrl_socket_l.close()
 
@@ -623,6 +730,11 @@ class MyApp(QtWidgets.QMainWindow):
         #         self.ui.pushButton_start.setEnabled(True)
 
     def on_tcp_client_message_ready_left(self, msg):
+        """_summary_
+
+        Args:
+            msg (_type_): _description_
+        """
         msg_list = msg.split()
         # print(msg_list)
         # if msg_list[0] == 'Left':
@@ -645,6 +757,11 @@ class MyApp(QtWidgets.QMainWindow):
         self.ui.textBrowser_l.append(html_received_msg(msg))
 
     def on_tcp_client_error_left(self, msg):
+        """_summary_
+
+        Args:
+            msg (_type_): _description_
+        """
         self.ui.textBrowser_l.append(html_err_msg(msg))
 
         if not self.dev_mode and self.ui.pushButton_connect_r.text() == "STOP":
@@ -655,6 +772,11 @@ class MyApp(QtWidgets.QMainWindow):
             self.ui.pushButton_connect_r.setEnabled(False)
 
     def spinbox_az_l(self, val):
+        """_summary_
+
+        Args:
+            val (_type_): _description_
+        """
         self.ui.horizontalSlider_az_l.setValue(val * 10)
         if abs(val) <= AZ_CENTER_THOD:
             self.ui.verticalSlider_el_ll.setEnabled(True)
@@ -701,6 +823,11 @@ class MyApp(QtWidgets.QMainWindow):
         self.ui.pushButton_set_l.setEnabled(True)
 
     def slider_az_l(self, val):
+        """_summary_
+
+        Args:
+            val (_type_): _description_
+        """
         self.ui.doubleSpinBox_az_l.setValue(val / 10)
 
         if abs(val / 10) <= AZ_CENTER_THOD:
@@ -748,6 +875,11 @@ class MyApp(QtWidgets.QMainWindow):
         self.ui.pushButton_set_l.setEnabled(True)
 
     def spinbox_el_ll(self, val):
+        """_summary_
+
+        Args:
+            val (_type_): _description_
+        """
         self.ui.verticalSlider_el_ll.setValue(val * 10)
         if val <= EL_UP_THOD:
             self.ui.doubleSpinBox_az_l.setEnabled(True)
@@ -758,6 +890,11 @@ class MyApp(QtWidgets.QMainWindow):
         self.ui.pushButton_set_l.setEnabled(True)
 
     def slider_el_ll(self, val):
+        """_summary_
+
+        Args:
+            val (_type_): _description_
+        """
         self.ui.doubleSpinBox_el_ll.setValue(val / 10)
         if val / 10 <= EL_UP_THOD:
             self.ui.doubleSpinBox_az_l.setEnabled(True)
@@ -768,14 +905,25 @@ class MyApp(QtWidgets.QMainWindow):
         self.ui.pushButton_set_l.setEnabled(True)
 
     def dial_pol_l(self, val):
+        """_summary_
+
+        Args:
+            val (_type_): _description_
+        """
         self.ui.doubleSpinBox_pol_l.setValue(val)
         self.ui.pushButton_set_l.setEnabled(True)
 
     def spinbox_pol_l(self, val):
+        """_summary_
+
+        Args:
+            val (_type_): _description_
+        """
         self.ui.dial_pol_l.setValue(int(val))
         self.ui.pushButton_set_l.setEnabled(True)
 
     def on_home_button_clicked_left(self):
+        """_summary_"""
         self.ui.groupBox_leftbot.setEnabled(False)
         self.ui.groupBox_rightbot.setEnabled(False)
         msg = "1.0\r\n"
@@ -783,6 +931,7 @@ class MyApp(QtWidgets.QMainWindow):
         self.cmd_socket_l.send(msg)
 
     def on_set_button_clicked_left(self):
+        """_summary_"""
         left_az = self.ui.doubleSpinBox_az_l.value()
 
         if abs(self.az_r - left_az) >= AZ_MARGIN:
@@ -814,6 +963,11 @@ class MyApp(QtWidgets.QMainWindow):
             )
 
     def display_message_left(self, msg):
+        """_summary_
+
+        Args:
+            msg (_type_): _description_
+        """
         self.ui.textBrowser_l.append(html_sent_msg(msg))
 
 
@@ -821,7 +975,6 @@ if __name__ == "__main__":
     QtCore.QCoreApplication.setAttribute(QtCore.Qt.AA_ShareOpenGLContexts)
 
     app = QtWidgets.QApplication(sys.argv)
-
     window = MyApp()
 
     sys.exit(app.exec())

@@ -1,6 +1,7 @@
-from PySide6.QtCore import QObject, Signal, Slot
 import time
 import socket
+
+from PySide6.QtCore import QObject, Signal, Slot
 
 
 class TCPClient(QObject):
